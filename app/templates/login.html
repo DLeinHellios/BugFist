@@ -3,18 +3,26 @@
 {% block title %}BugFist | Login{% endblock %}
 
 {% block content %}
-<div class="col-6 text-justify content">
+<div class="col-6 text-left content">
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert alert-secondary" role="alert">
+          {{msg}}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
   <h2>Login</h2>
-
-  <form>
+  <form method="POST">
     <div class="form-group">
-      <input type="text" class="form-control" id="inputUsername" placeholder="Username"">
+      <input type="text" class="form-control" name="loginUser" placeholder="Username"">
     </div>
 
     <div class="form-group">
-      <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+      <input type="password" class="form-control" name="loginPass" placeholder="Password">
     </div>
-    <button type="submit" class="btn btn-outline-dark">Submit</button>
+    <button type="submit" value="submit" class="btn btn-outline-dark">Submit</button>
   </form>
 </div>
 

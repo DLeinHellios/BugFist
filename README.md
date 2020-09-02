@@ -1,1 +1,1 @@
-#BugFist - A bug tracker in Python + Flask
+# BugFist - A bug tracker in Python + Flask
