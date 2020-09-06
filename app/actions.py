@@ -1,6 +1,6 @@
 from flask import session
 
-class Users:
+class UserSession:
     def __init__(self):
         '''Holds methods for user actions'''
         pass

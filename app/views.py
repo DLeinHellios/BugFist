@@ -1,5 +1,5 @@
 from flask import render_template, url_for, redirect, request, session, flash
-from app import app, users
+from app import app, user
 
 # Main page
 @app.route('/')
@@ -14,7 +14,7 @@ def login_page():
         return redirect(url_for("user_dashboard"))
     else:
         if request.method == "POST":
-            if users.auth(request.form["loginUser"], request.form["loginPass"]):
+            if user.auth(request.form["loginUser"], request.form["loginPass"]):
                 return redirect(url_for("user_dashboard"))
             else:
                 flash("Invalid credentials, please try again", "warning")
@@ -27,7 +27,7 @@ def login_page():
 @app.route('/logout')
 def logout_user():
     if "username" in session:
-        users.logout()
+        user.logout()
         flash("You have been logged out", "info")
 
     return redirect(url_for("login_page"))
