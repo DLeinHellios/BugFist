@@ -56,12 +56,12 @@ def user_dashboard():
 # Admin dashboard
 @app.route("/admin")
 def admin_dashboard():
-    if "username" in session and "isAdmin":
+    if "username" in session and session["authLevel"] == 2:
         return render_template("admin.html")
     elif "username" in session:
         return redirect(url_for("user_dashboard"))
     else:
-        flash("Please login to continue", "info")        
+        flash("Please login to continue", "info")
         return redirect(url_for("login_page"))
 
 
