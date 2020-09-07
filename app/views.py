@@ -1,5 +1,6 @@
 from flask import render_template, url_for, redirect, request, session, flash
-from app import app, userSession, userManage
+from flask_wtf.csrf import CSRFError
+from app import app, recaptcha, userSession, userManage
 
 # Main page
 @app.route('/')
@@ -17,7 +18,7 @@ def login_page():
             if userSession.auth(request.form["loginUser"], request.form["loginPass"]):
                 return redirect(url_for("user_dashboard"))
             else:
-                flash("Invalid credentials, please try again", "warning")
+                flash("Invalid credentials", "warning")
                 return render_template("login.html")
         else:
             return render_template("login.html")
@@ -37,11 +38,16 @@ def logout_user():
 @app.route('/register', methods=["POST", "GET"])
 def register_user():
     if request.method == "POST":
-        validate = userManage.validate_new_user(request.form["rUser"], request.form["rEmail"],
-            request.form["rPass0"], request.form["rPass1"], request.form["registerCode"])
+        if recaptcha.verify():
+            validate = userManage.validate_new_user(request.form["rUser"], request.form["rEmail"],\
+                request.form["rPass0"], request.form["rPass1"], request.form["registerCode"])
+        else:
+            flash("Please complete the CAPTCHA to continue")
+            return render_template("register.html", prefill=[request.form["rUser"], request.form["rEmail"]])
+
         if validate != '':
             flash(validate)
-            return render_template("register.html")
+            return render_template("register.html", prefill=[request.form["rUser"], request.form["rEmail"]])
         else:
             userManage.register_user(request.form["rUser"], request.form["rEmail"], request.form["rPass0"])
             userSession.auth(request.form["rUser"], request.form["rPass0"])
@@ -51,7 +57,7 @@ def register_user():
         if "username" in session:
             return redirect(url_for("user_dashboard"))
         else:
-            return render_template("register.html")
+            return render_template("register.html", prefill=['',''])
 
 
 
@@ -87,7 +93,13 @@ def admin_dashboard():
         return redirect(url_for("login_page"))
 
 
+#----- Errors -----
 # 404 page
 @app.errorhandler(404)
-def page_not_found(e):
+def handle_404_error(e):
   return render_template("404.html")
+
+
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    return render_template('csrf_error.html', reason=e.description), 400
