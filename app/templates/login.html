@@ -13,6 +13,7 @@
       {% endfor %}
     {% endif %}
   {% endwith %}
+
   <h2>Login</h2>
   <form method="POST">
     <div class="form-group">
@@ -23,9 +24,8 @@
       <input type="password" class="form-control" name="loginPass" placeholder="Password">
     </div>
     <button type="submit" value="submit" class="btn btn-outline-dark">Submit</button>
+    <a href="/register" class="btn btn-outline-dark" role="button">Register</a>
   </form>
 </div>
-
-
 
 {% endblock %}

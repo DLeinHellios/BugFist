@@ -1,5 +1,5 @@
 from flask import render_template, url_for, redirect, request, session, flash
-from app import app, user
+from app import app, userSession, userManage
 
 # Main page
 @app.route('/')
@@ -14,7 +14,7 @@ def login_page():
         return redirect(url_for("user_dashboard"))
     else:
         if request.method == "POST":
-            if user.auth(request.form["loginUser"], request.form["loginPass"]):
+            if userSession.auth(request.form["loginUser"], request.form["loginPass"]):
                 return redirect(url_for("user_dashboard"))
             else:
                 flash("Invalid credentials, please try again", "warning")
@@ -27,10 +27,32 @@ def login_page():
 @app.route('/logout')
 def logout_user():
     if "username" in session:
-        user.logout()
+        userSession.logout()
         flash("You have been logged out", "info")
 
     return redirect(url_for("login_page"))
+
+
+# User registration
+@app.route('/register', methods=["POST", "GET"])
+def register_user():
+    if request.method == "POST":
+        validate = userManage.validate_new_user(request.form["rUser"], request.form["rEmail"],
+            request.form["rPass0"], request.form["rPass1"], request.form["registerCode"])
+        if validate != '':
+            flash(validate)
+            return render_template("register.html")
+        else:
+            userManage.register_user(request.form["rUser"], request.form["rEmail"], request.form["rPass0"])
+            userSession.auth(request.form["rUser"], request.form["rPass0"])
+            return redirect(url_for("user_dashboard"))
+
+    else:
+        if "username" in session:
+            return redirect(url_for("user_dashboard"))
+        else:
+            return render_template("register.html")
+
 
 
 # Submit page

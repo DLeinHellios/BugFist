@@ -1,13 +1,14 @@
-# Script to manually manage db
-
-import os
+# Manually manages database
+import os, sys
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
+
 
 from dotenv import load_dotenv
 load_dotenv('.env')
 
-from app import app, db
+from app import app, db, bcrypt
+from app.models import User
 
 migrate = Migrate(app, db)
 manager = Manager(app)

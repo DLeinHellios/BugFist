@@ -2,13 +2,13 @@ from app import db
 from datetime import date
 
 
-class Users(db.Model):
+class User(db.Model):
     __tablename__ = 'Users'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(), unique=True)
-    email = db.Column(db.String(), unique=True)
-    pw = db.Column(db.String())
+    username = db.Column(db.String(16), unique=True)
+    email = db.Column(db.String(20), unique=True)
+    pw = db.Column(db.String(60))
     access = db.Column(db.Integer())
     enabled = db.Column(db.Boolean())
 
