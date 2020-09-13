@@ -1,21 +1,22 @@
 from app import db
-from datetime import date
+from datetime import datetime
+from sqlalchemy import ForeignKey
 
 
 class User(db.Model):
-    __tablename__ = 'Users'
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(16), unique=True)
-    email = db.Column(db.String(20), unique=True)
-    pw = db.Column(db.String(60))
-    access = db.Column(db.Integer())
-    enabled = db.Column(db.Boolean())
+    username = db.Column(db.String, unique=True)
+    email = db.Column(db.String, unique=True)
+    hash = db.Column(db.String(60))
+    access = db.Column(db.Integer)
+    enabled = db.Column(db.Boolean)
 
-    def __init__(self, username, email, pw, access):
+    def __init__(self, username, email, hash, access):
         self.username = username
         self.email = email
-        self.pw = pw
+        self.hash = hash
         self.access = access
         self.enabled = True
 
@@ -25,27 +26,56 @@ class User(db.Model):
 
 
 
-class Reports(db.Model):
-    __tablename__ = 'Reports'
+class Category(db.Model):
+    __tablename__ = 'category'
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String())
-    body = db.Column(db.String())
-    raiseUser = db.Column(db.Integer())
-    raiseDate = db.Column(db.Date())
-    priority = db.Column(db.Integer())
-    assignUser = db.Column(db.Integer())
-    open = db.Column(db.Boolean())
+    name = db.Column(db.String)
+    active = db.Column(db.Boolean)
 
 
-    def __init__(self, title, body, raiseUser, priority):
+
+class Ticket(db.Model):
+    __tablename__ = 'tickets'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String)
+    body = db.Column(db.String)
+    category = db.Column(db.Integer, ForeignKey(Category.id))
+    raise_user = db.Column(db.Integer, ForeignKey(User.id))
+    raise_date = db.Column(db.DateTime)
+    priority = db.Column(db.Integer)
+    assign_user = db.Column(db.Integer, ForeignKey(User.id))
+    open = db.Column(db.Boolean)
+
+
+    def __init__(self, title, body, category, raise_user):
         self.title = title
         self.body = body
-        self.raiseUser = raiseUser
-        self.raiseDate = date.today()
-        self.priority = priority
-        assignUser = None
-        open = True
+        self.raise_user = raise_user
+        self.raise_date = datetime.today()
+        self.category = category
+        self.priority = None
+        self.assign_user = None
+        self.open = True
+
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+
+
+class Settings(db.Model):
+    __tablename__ = 'settings'
+
+    id = db.Column(db.Integer, primary_key=True)
+    settings = db.Column(db.String)
+    value = db.Column(db.Integer)
+
+
+    def __init__(self, setting, value):
+        self.setting = setting
+        self.value = value
 
 
     def __repr__(self):

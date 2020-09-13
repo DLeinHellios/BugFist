@@ -5,19 +5,17 @@ from app.models import User
 
 
 class UserSession:
-    def create_user_session(self, username, authLvl):
+    def create_user_session(self, userData):
         '''Creates session of authed user'''
-        session["username"] = username
-        session["authLevel"] = authLvl
+        session["username"] = userData.username
+        session["authLevel"] = userData.access
 
 
     def auth(self, name, passwd):
         '''Accepts user credentials, authenticates credentials, and creates builds session values'''
-        #TODO build-out authentication
         userData = User.query.filter_by(username=name).first()
-        if userData != None and bcrypt.check_password_hash(userData.pw, passwd):
-            # Pull user values from db
-            self.create_user_session(name, userData.access)
+        if userData != None and bcrypt.check_password_hash(userData.hash, passwd):
+            self.create_user_session(userData)
             return True
         else:
             return False
@@ -27,7 +25,6 @@ class UserSession:
         if "username" in session:
             del session["username"]
             del session["authLevel"]
-
 
 
 class UserManage:
@@ -57,6 +54,9 @@ class UserManage:
         elif registerCode != os.environ['REGISTER_CODE']:
             msg = 'Invalid registration code'
 
+        elif len(username) > 16:
+            msg = 'Username too long: max of 16 characters'
+
         elif User.query.filter_by(username=username).first() != None:
             msg = 'Username unavailable'
 
@@ -69,7 +69,6 @@ class UserManage:
         return msg
 
 
-
     def register_user(self, username, email, passwd):
         '''Writes new user to db, first user will be created as admin'''
         if User.query.all() == []:
@@ -77,6 +76,6 @@ class UserManage:
         else:
             accessLevel = 0
 
-        admin = User(username, email, bcrypt.generate_password_hash(passwd).decode('utf8'), accessLevel)
-        db.session.add(admin)
+        newUser = User(username, email, bcrypt.generate_password_hash(passwd).decode('utf8'), accessLevel)
+        db.session.add(newUser)
         db.session.commit()
