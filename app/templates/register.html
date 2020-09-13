@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="row justify-content-center">
-  <div class="col-lg-5 px-5 content-form">
+  <div class="col-lg-5 px-4 content-form">
     {% with messages = get_flashed_messages() %}
       {% if messages %}
         {% for msg in messages %}
@@ -19,10 +19,10 @@
     <form method="POST">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       <div class="form-group">
-        <input type="text" class="form-control" name="rUser" placeholder="Username", value={{ prefill[0] }}>
+        <input type="text" class="form-control" name="rUser" placeholder="Username" value={{ prefill[0] }}>
       </div>
       <div class="form-group">
-        <input type="email" class="form-control" name="rEmail" placeholder="Email", value={{ prefill[1] }}>
+        <input type="email" class="form-control" name="rEmail" placeholder="Email" value={{ prefill[1] }}>
       </div>
       <div class="form-group">
         <input type="password" class="form-control" name="rPass0" placeholder="Password (minimum 8 characters)">
