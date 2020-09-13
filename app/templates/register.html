@@ -3,40 +3,41 @@
 {% block title %}BugFist | Register{% endblock %}
 
 {% block content %}
-<div class="col-8 text-left content">
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      {% for msg in messages %}
-        <div class="alert alert-secondary" role="alert">
-          {{msg}}
-        </div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
+<div class="row justify-content-center">
+  <div class="col-lg-5 px-5 content-form">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="alert alert-secondary" role="alert">
+            {{msg}}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
-  <h2>Sign-up</h2>
-  <form method="POST">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-    <div class="form-group">
-      <input type="text" class="form-control" name="rUser" placeholder="Username", value={{ prefill[0] }}>
-    </div>
-    <div class="form-group">
-      <input type="email" class="form-control" name="rEmail" placeholder="Email", value={{ prefill[1] }}>
-    </div>
-    <div class="form-group">
-      <input type="password" class="form-control" name="rPass0" placeholder="Password (minimum 8 characters)">
-    </div>
-    <div class="form-group">
-      <input type="password" class="form-control" name="rPass1" placeholder="Password (again)">
-    </div>
-    <div class="form-group">
-      <input type="text" class="form-control" name="registerCode" placeholder="Registration Code (required)">
-    </div>
-    <div class="form-group">
-      {{ recaptcha }}
-    </div>
-    <button type="submit" value="submit" class="btn btn-outline-dark">Submit</button>
-  </form>
+    <h2>Sign-up</h2>
+    <form method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      <div class="form-group">
+        <input type="text" class="form-control" name="rUser" placeholder="Username", value={{ prefill[0] }}>
+      </div>
+      <div class="form-group">
+        <input type="email" class="form-control" name="rEmail" placeholder="Email", value={{ prefill[1] }}>
+      </div>
+      <div class="form-group">
+        <input type="password" class="form-control" name="rPass0" placeholder="Password (minimum 8 characters)">
+      </div>
+      <div class="form-group">
+        <input type="password" class="form-control" name="rPass1" placeholder="Password (again)">
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-control" name="registerCode" placeholder="Registration Code (required)">
+      </div>
+      <div class="form-group">
+        {{ recaptcha }}
+      </div>
+      <button type="submit" value="submit" class="btn btn-lg btn-outline-dark mx-auto">Submit</button>
+    </form>
+  </div>
 </div>
-
 {% endblock %}

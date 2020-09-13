@@ -3,15 +3,17 @@
 {% block title %}BugFist | Let's Smash Bugs{% endblock %}
 
 {% block content %}
-<div class="col-8 text-left content">
-  <h1>Welcome</h1>
-  <p>This is a sample bug tracker written in Python and Flask, styled with Bootstrap. This project can be found on GitHub <a href="https://github.com/DLeinHellios/BugFist" target="_blank">here</a>. Please have a look around and feel free to download and play with the code. If you have my demo credentials, click the "Login" button to see how things look for users and administrators. If you like this project, please check out my others <a href="https://dleinhellios.com" target="_blank">here</a>.</p>
-  <hr>
-  {% if "username" in session %}
-    <a href="/logout" class="btn btn-outline-dark" role="button">Logout</a>
-  {% else %}
-    <a href="/login" class="btn btn-outline-dark" role="button">Login</a>
-    <a href="/register" class="btn btn-outline-dark" role="button">Register</a>
-  {% endif %}
-</div>
+  <div class="row justify-content-center">
+    <div class="col-lg-5 px-5 content-body">
+      <h1>Welcome</h1>
+      <p>This is a sample bug tracker written in Python and Flask, styled with Bootstrap. This project can be found on GitHub <a href="https://github.com/DLeinHellios/BugFist" target="_blank">here</a>. Please have a look around and feel free to download and play with the code. If you have my demo credentials, click the "Login" button to see how things look for users and administrators. If you like this project, please check out my others <a href="https://dleinhellios.com" target="_blank">here</a>.</p>
+      <hr>
+      {% if "username" in session %}
+        <a href="/logout" class="btn btn-lg btn-outline-dark" role="button">Logout</a>
+      {% else %}
+        <a href="/login" class="btn btn-lg btn-outline-dark" role="button">Login</a>
+        <a href="/register" class="btn btn-lg btn-outline-dark" role="button">Register</a>
+      {% endif %}
+    </div>
+  </div>
 {% endblock %}

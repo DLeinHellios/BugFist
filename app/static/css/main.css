@@ -8,27 +8,15 @@ body {
   padding-bottom: 50px;
 }
 
-p a {
-  color: black;
-  text-decoration: underline;
-}
 
-p a:active {
-  outline: none;
-}
-
-p a:hover {
-  text-decoration: none;
-  color: blue;
-}
 
 .navbar {
   margin-bottom: 0;
   border-radius: 0;
 }
 
-.content {
-    padding-top: 25px;
+.form-control {
+  font-size: 1.3rem;
 }
 
 .form-control:focus {
@@ -41,4 +29,30 @@ footer {
   line-height: 50px;
   position: fixed;
   bottom: 0;
+}
+
+.footer-text p a {
+  color: #6C757D;
+}
+
+.content-body {
+  font-size: 1.3rem;
+}
+
+.content-body p a {
+  color: black;
+  text-decoration: underline;
+}
+
+.content-body p a:active {
+  outline: none;
+}
+
+.content-body p a:hover {
+  text-decoration: none;
+  color: blue;
+}
+
+.content-form {
+  max-width:600px;
 }
