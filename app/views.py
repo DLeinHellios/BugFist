@@ -1,6 +1,7 @@
 from flask import render_template, url_for, redirect, request, session, flash
 from flask_wtf.csrf import CSRFError
-from app import app, recaptcha, userSession, userManage
+from app import app, recaptcha, userSession, userManage, ticketManage
+from app.models import *
 
 # Main page
 @app.route('/')
@@ -39,7 +40,7 @@ def logout_user():
 def register_user():
     if request.method == "POST":
         if recaptcha.verify():
-            validate = userManage.validate_new_user(request.form["rUser"], request.form["rEmail"],\
+            validate = userManage.validate_new_user(request.form["rUser"], request.form["rEmail"],
                 request.form["rPass0"], request.form["rPass1"], request.form["registerCode"])
         else:
             flash("Please complete the CAPTCHA to continue")
@@ -60,15 +61,24 @@ def register_user():
             return render_template("register.html", prefill=['',''])
 
 
-
 # Submit page
-@app.route('/submit')
+@app.route('/submit', methods=["POST", "GET"])
 def submit_page():
-    if "username" in session:
-        return render_template("submit.html")
+    if request.method == "POST":
+        validate = ticketManage.validate_new_ticket(request.form["ticketTitle"], request.form["ticketBody"], request.form.get("ticketCategory"))
+        if validate != '':
+            flash(validate)
+            return render_template("submit.html", prefill=[request.form["ticketTitle"], request.form["ticketBody"]])
+        else:
+            ticketManage.submit_ticket(request.form["ticketTitle"], request.form["ticketBody"], request.form.get("ticketCategory"))
+            flash("Your ticket has been submitted")
+            return redirect(url_for("user_dashboard"))
     else:
-        flash("Please login to continue", "info")
-        return redirect(url_for("login_page"))
+        if "username" in session:
+            return render_template("submit.html", prefill = ['',''], categories=Category.query.all())
+        else:
+            flash("Please login to continue", "info")
+            return redirect(url_for("login_page"))
 
 
 # User dashboard

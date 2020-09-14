@@ -34,6 +34,15 @@ class Category(db.Model):
     active = db.Column(db.Boolean)
 
 
+    def __init__(self, name):
+        self.name = name
+        self.active = True
+
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+
 
 class Ticket(db.Model):
     __tablename__ = 'tickets'
@@ -47,6 +56,8 @@ class Ticket(db.Model):
     priority = db.Column(db.Integer)
     assign_user = db.Column(db.Integer, ForeignKey(User.id))
     open = db.Column(db.Boolean)
+    notes = db.Column(db.String)
+    resolution = db.Column(db.String)
 
 
     def __init__(self, title, body, category, raise_user):
@@ -58,6 +69,8 @@ class Ticket(db.Model):
         self.priority = None
         self.assign_user = None
         self.open = True
+        self.notes = None
+        self.resolution = None
 
 
     def __repr__(self):

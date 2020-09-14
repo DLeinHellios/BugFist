@@ -3,11 +3,21 @@
 {% block title %}BugFist | Let's Smash Bugs{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-lg-5 px-5 content-body">
-    <h2>Welcome back, {{session["username"]}}!</h2>
-    <p>Soon this will be a nice dashboard where standard users can view the status of their previous bug reports. The admins/contributors will be able to view all reports on this page. There will also be a prominent link to submit a new bug. Administrators will also be able to access this page, and submit bugs like a standard user. Administration of users will take place on a separate page.</p>
-    <hr>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert alert-secondary" role="alert">
+          {{msg}}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="row justify-content-center">
+    <div class="col-lg-5 px-5 content-body">
+      <h2>Welcome back, {{session["username"]}}!</h2>
+      <p>Soon this will be a nice dashboard where standard users can view the status of their previous bug reports. The admins/contributors will be able to view all reports on this page. There will also be a prominent link to submit a new bug. Administrators will also be able to access this page, and submit bugs like a standard user. Administration of users will take place on a separate page.</p>
+      <hr>
+    </div>
   </div>
-</div>
 {% endblock %}

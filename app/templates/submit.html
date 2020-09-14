@@ -4,10 +4,42 @@
 
 {% block content %}
 <div class="row justify-content-center">
-  <div class="col-lg-5 px-5 content-body">
-    <h2>Submit a new bug report</h2>
-    <p>Here will be the form to create a new bug report. Including manditory fields for title and body, but raise user and raise date will be populated automatically. Maybe there will be something about priority assignment.</p>
-    <hr>
+  <div class="col-xl-5 px-6 content-form">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="alert alert-secondary" role="alert">
+            {{msg}}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <h2>Submit a Ticket</h2>
+    <form method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      <div class="form-group">
+        <input type="text" class="form-control" name="ticketTitle" placeholder="Title" value={{ prefill[0] }}>
+      </div>
+      <div class="form-group">
+        <textarea class="form-control" name="ticketBody" rows=3 placeholder="Please write a detailed description of the issue..." value={{ prefill[1] }}></textarea>
+      </div>
+      <div class="form-group">
+        <select class="form-control" name="ticketCategory">
+          <option style="display:none" disabled selected value >Select a Category</option>
+          {% if categories %}
+            {% for cat in categories %}
+              {% if cat.active %}
+                <option value={{cat.id}}>{{cat.name}}</option>
+              {% endif %}
+            {%  endfor %}
+          {% else %}
+            <option disabled value>No categories available</option>
+          {% endif %}
+        </select>
+      </div>
+      <button type="submit" value="submit" class="btn btn-lg btn-outline-dark mx-auto">Submit</button>
+    </form>
   </div>
 </div>
 {% endblock %}

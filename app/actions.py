@@ -1,12 +1,13 @@
 import os
 from flask import session
 from app import db, bcrypt
-from app.models import User
+from app.models import *
 
 
 class UserSession:
     def create_user_session(self, userData):
         '''Creates session of authed user'''
+        session["userId"] = userData.id
         session["username"] = userData.username
         session["authLevel"] = userData.access
 
@@ -23,6 +24,7 @@ class UserSession:
 
     def logout(self):
         if "username" in session:
+            del session["userId"]
             del session["username"]
             del session["authLevel"]
 
@@ -78,4 +80,24 @@ class UserManage:
 
         newUser = User(username, email, bcrypt.generate_password_hash(passwd).decode('utf8'), accessLevel)
         db.session.add(newUser)
+        db.session.commit()
+
+
+
+class TicketManage:
+    def validate_new_ticket(self, title, body, category):
+        '''Returns message to flash if ticket submission is invalid, otherwise returns blank string'''
+        msg = ''
+        if title == '':
+            msg = 'Tickets must include a title'
+        elif body == '':
+            msg = 'Tickets must include a description'
+
+        return msg
+
+
+    def submit_ticket(self, title, body, category):
+        '''Writes a new ticket to the database'''
+        newTicket = Ticket(title, body, category, session['userId'])
+        db.session.add(newTicket)
         db.session.commit()

@@ -20,6 +20,7 @@ from app.actions import *
 # Init objects
 userSession = UserSession()
 userManage = UserManage()
+ticketManage = TicketManage()
 
 # Import views
 from app.views import *
