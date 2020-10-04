@@ -19,18 +19,18 @@
     <form method="POST">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       <div class="form-group">
-        <input type="text" class="form-control" name="ticketTitle" placeholder="Title" value={{ prefill[0] }}>
+        <input type="text" class="form-control" name="ticketTitle" placeholder="Title" value="{{ prefill[0] }}">
       </div>
       <div class="form-group">
-        <textarea class="form-control" name="ticketBody" rows=3 placeholder="Please write a detailed description of the issue..." value={{ prefill[1] }}></textarea>
+        <textarea class="form-control" name="ticketBody" rows=3 placeholder="Please write a detailed description of the issue...">{{ prefill[1] }}</textarea>
       </div>
       <div class="form-group">
         <select class="form-control" name="ticketCategory">
           <option style="display:none" disabled selected value >Select a Category</option>
           {% if categories %}
             {% for cat in categories %}
-              {% if cat.active %}
-                <option value={{cat.id}}>{{cat.name}}</option>
+              {% if cat['active'] %}
+                <option value="{{ cat['id' ]}}">{{ cat['name'] }}</option>
               {% endif %}
             {%  endfor %}
           {% else %}

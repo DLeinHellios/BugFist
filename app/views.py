@@ -6,6 +6,7 @@ from app.models import *
 # Main page
 @app.route('/')
 def main_page():
+    # Render static home page
     return render_template("index.html")
 
 
@@ -13,21 +14,26 @@ def main_page():
 @app.route('/login', methods=["POST", "GET"])
 def login_page():
     if "username" in session:
+        # Redirect logged-in users to dashboard
         return redirect(url_for("user_dashboard"))
+
     else:
         if request.method == "POST":
+            # Login user
             if userSession.auth(request.form["loginUser"], request.form["loginPass"]):
                 return redirect(url_for("user_dashboard"))
             else:
                 flash("Invalid credentials", "warning")
                 return render_template("login.html")
         else:
+            # Display login page
             return render_template("login.html")
 
 
 # User logout
 @app.route('/logout')
 def logout_user():
+    # Delete user session data and redirect to login page
     if "username" in session:
         userSession.logout()
         flash("You have been logged out", "info")
@@ -40,6 +46,7 @@ def logout_user():
 def register_user():
     if request.method == "POST":
         if recaptcha.verify():
+            # Validate reCAPTCHA
             validate = userManage.validate_new_user(request.form["rUser"], request.form["rEmail"],
                 request.form["rPass0"], request.form["rPass1"], request.form["registerCode"])
         else:
@@ -47,6 +54,7 @@ def register_user():
             return render_template("register.html", prefill=[request.form["rUser"], request.form["rEmail"]])
 
         if validate != '':
+            # Validate new user data
             flash(validate)
             return render_template("register.html", prefill=[request.form["rUser"], request.form["rEmail"]])
         else:
@@ -56,8 +64,10 @@ def register_user():
 
     else:
         if "username" in session:
+            # Redirect logged-in users to dashboard
             return redirect(url_for("user_dashboard"))
         else:
+            # Render registration page
             return render_template("register.html", prefill=['',''])
 
 
@@ -67,16 +77,21 @@ def submit_page():
     if request.method == "POST":
         validate = ticketManage.validate_new_ticket(request.form["ticketTitle"], request.form["ticketBody"], request.form.get("ticketCategory"))
         if validate != '':
+            # If ticket data is invalid, redirect back to submit
             flash(validate)
-            return render_template("submit.html", prefill=[request.form["ticketTitle"], request.form["ticketBody"]])
+            return render_template("submit.html", prefill=[request.form["ticketTitle"], request.form["ticketBody"]], categories=Category.query.all())
         else:
+            # Submit ticket and redirect to dashboard
             ticketManage.submit_ticket(request.form["ticketTitle"], request.form["ticketBody"], request.form.get("ticketCategory"))
             flash("Your ticket has been submitted")
             return redirect(url_for("user_dashboard"))
+
     else:
         if "username" in session:
+            # Render submit page to logged-in users
             return render_template("submit.html", prefill = ['',''], categories=Category.query.all())
         else:
+            # No user logged-in, redirect to login page
             flash("Please login to continue", "info")
             return redirect(url_for("login_page"))
 

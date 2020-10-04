@@ -23,6 +23,7 @@ class UserSession:
 
 
     def logout(self):
+        '''Removes user data from session'''
         if "username" in session:
             del session["userId"]
             del session["username"]
@@ -31,6 +32,7 @@ class UserSession:
 
 class UserManage:
     def __init__(self):
+        '''Sets default password settings'''
         self.min_pw_length = 8
 
 
@@ -72,12 +74,14 @@ class UserManage:
 
 
     def register_user(self, username, email, passwd):
-        '''Writes new user to db, first user will be created as admin'''
+        '''Writes a new user to the database'''
+        # Make first user admin
         if User.query.all() == []:
             accessLevel = 2
         else:
             accessLevel = 0
 
+        # Register new user
         newUser = User(username, email, bcrypt.generate_password_hash(passwd).decode('utf8'), accessLevel)
         db.session.add(newUser)
         db.session.commit()
