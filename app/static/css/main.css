@@ -8,8 +8,6 @@ body {
   padding-bottom: 50px;
 }
 
-
-
 .navbar {
   margin-bottom: 0;
   border-radius: 0;
@@ -51,4 +49,8 @@ footer {
 
 .content-form {
   max-width: 900px;
+}
+
+.content-form textarea {
+  min-height: 200px;
 }

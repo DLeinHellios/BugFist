@@ -106,6 +106,25 @@ def user_dashboard():
         return redirect(url_for("login_page"))
 
 
+# Ticket Pages
+@app.route("/t/<ticketId>")
+def ticket_page(ticketId):
+    if "username" in session:
+        ticket = Ticket.query.filter_by(id=ticketId).first()
+        if ticket != None:
+            # Display ticket page
+            return render_template("ticket.html", ticket=ticket, categories=Category.query.all())
+        else:
+            # Redirect to dashboard and flash ticket not found
+            flash("Ticket not found")
+            return redirect(url_for("user_dashboard"))
+
+    else:
+        # No user logged-in, redirect to login page
+        flash("Please login to continue", "info")
+        return redirect(url_for("login_page"))
+
+
 # Admin dashboard
 @app.route("/admin")
 def admin_dashboard():
