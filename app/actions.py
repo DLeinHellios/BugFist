@@ -1,4 +1,4 @@
-import os
+import os, datetime
 from flask import session
 from app import db, bcrypt
 from app.models import *
@@ -15,7 +15,7 @@ class UserSession:
     def auth(self, name, passwd):
         '''Accepts user credentials, authenticates credentials, and creates builds session values'''
         userData = User.query.filter_by(username=name).first()
-        if userData != None and bcrypt.check_password_hash(userData.hash, passwd):
+        if userData != None and bcrypt.check_password_hash(userData.hash, passwd) and userData.enabled:
             self.create_user_session(userData)
             return True
         else:
@@ -100,8 +100,18 @@ class TicketManage:
         return msg
 
 
-    def submit_ticket(self, title, body, category):
+    def submit_ticket(self, title, body, category, priority):
         '''Writes a new ticket to the database'''
-        newTicket = Ticket(title, body, category, session['userId'])
+        newTicket = Ticket(title, body, category, priority, session['userId'])
         db.session.add(newTicket)
+        db.session.commit()
+
+
+    def resolve_ticket(self, id, resolution):
+        '''Adds resolution data to an existing ticket'''
+        ticket = Ticket.query.filter_by(id=id).first()
+        ticket.resolution = resolution
+        ticket.resolve_user_id = session['userId']
+        ticket.resolve_date = datetime.today()
+        ticket.open = False
         db.session.commit()

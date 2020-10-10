@@ -74,15 +74,15 @@ def register_user():
 # Submit page
 @app.route('/submit', methods=["POST", "GET"])
 def submit_page():
-    if request.method == "POST":
-        validate = ticketManage.validate_new_ticket(request.form["ticketTitle"], request.form["ticketBody"], request.form.get("ticketCategory"))
+    if request.method == "POST" and "username" in session:
+        validate = ticketManage.validate_new_ticket(request.form["title"], request.form["body"], request.form.get("category"))
         if validate != '':
             # If ticket data is invalid, redirect back to submit
             flash(validate)
-            return render_template("submit.html", prefill=[request.form["ticketTitle"], request.form["ticketBody"]], categories=Category.query.all())
+            return render_template("submit.html", prefill=[request.form["title"], request.form["body"]], categories=Category.query.all())
         else:
             # Submit ticket and redirect to dashboard
-            ticketManage.submit_ticket(request.form["ticketTitle"], request.form["ticketBody"], request.form.get("ticketCategory"))
+            ticketManage.submit_ticket(request.form["title"], request.form["body"], request.form.get("category"), request.form.get("priority"))
             flash("Your ticket has been submitted")
             return redirect(url_for("user_dashboard"))
 
@@ -111,18 +111,55 @@ def user_dashboard():
 def ticket_page(ticketId):
     if "username" in session:
         ticket = Ticket.query.filter_by(id=ticketId).first()
-        if ticket != None:
-            # Display ticket page
-            return render_template("ticket.html", ticket=ticket, categories=Category.query.all())
+        if session['username'] == ticket.raise_user.username or session['authLevel'] > 0:
+            if ticket != None:
+                # Display ticket page
+                return render_template("ticket.html", ticket=ticket, categories=Category.query.all())
+            else:
+                # Redirect to dashboard and flash ticket not found
+                flash("Ticket not found")
+                return redirect(url_for("user_dashboard"))
+
         else:
-            # Redirect to dashboard and flash ticket not found
-            flash("Ticket not found")
+            # User is not raise user and lacks access level to view
+            flash("You lack permission to view this ticket")
             return redirect(url_for("user_dashboard"))
 
     else:
         # No user logged-in, redirect to login page
         flash("Please login to continue", "info")
         return redirect(url_for("login_page"))
+
+
+@app.route("/r/<ticketId>", methods=["POST", "GET"])
+def resolve_page(ticketId):
+    ticket = Ticket.query.filter_by(id=ticketId).first()
+
+    if request.method == "POST" and session['authLevel'] > 0:
+        if request.form["resolution"] != '':
+            # Submit resolution
+            ticketManage.resolve_ticket(ticket.id, request.form["resolution"])
+            return redirect(url_for("ticket_page", ticketId = ticket.id))
+
+        else:
+            # Resolution is blank
+            flash("Please enter a resolution")
+            return redirect(url_for("resolve_page", ticketId = ticket.id))
+
+    else:
+        if "username" in session:
+            if session['authLevel'] > 0 and ticket.open:
+                return render_template("resolve.html", ticket=ticket)
+
+            else:
+                # User not permitted to resolve
+                flash("You lack permission to resolve this ticket")
+                return redirect(url_for("user_dashboard"))
+
+        else:
+            # No user logged-in, redirect to login page
+            flash("Please login to continue", "info")
+            return redirect(url_for("login_page"))
 
 
 # Admin dashboard

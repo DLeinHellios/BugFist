@@ -50,27 +50,53 @@ class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String)
     body = db.Column(db.String)
-    category = db.Column(db.Integer, ForeignKey(Category.id))
-    raise_user = db.Column(db.Integer, ForeignKey(User.id))
+    category_id = db.Column(db.Integer, ForeignKey(Category.id))
+    category = db.relationship("Category")
+    raise_user_id = db.Column(db.Integer, ForeignKey(User.id))
+    raise_user = db.relationship("User", foreign_keys=raise_user_id)
     raise_date = db.Column(db.DateTime)
     priority = db.Column(db.Integer)
-    assign_user = db.Column(db.Integer, ForeignKey(User.id))
     open = db.Column(db.Boolean)
-    notes = db.Column(db.String)
     resolution = db.Column(db.String)
+    resolve_user_id = db.Column(db.Integer, ForeignKey(User.id))
+    resolve_user = db.relationship("User", foreign_keys=resolve_user_id)
+    resolve_date = db.Column(db.DateTime)
 
 
-    def __init__(self, title, body, category, raise_user):
+    def __init__(self, title, body, category_id, priority, raise_user_id):
         self.title = title
         self.body = body
-        self.raise_user = raise_user
+        self.raise_user_id = raise_user_id
         self.raise_date = datetime.today()
-        self.category = category
-        self.priority = None
-        self.assign_user = None
+        self.category_id = category_id
+        self.priority = priority
         self.open = True
-        self.notes = None
-        self.resolution = None
+
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+
+
+class Note(db.Model):
+    __tablename__ = 'notes'
+
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.String)
+    ticket_id = db.Column(db.Integer, ForeignKey(Ticket.id))
+    ticket = db.relationship("Ticket")
+    author_id = db.Column(db.Integer, ForeignKey(User.id))
+    author = db.relationship("User")
+    date = db.Column(db.DateTime)
+    active = db.Column(db.Boolean)
+
+
+    def __init__(self, body, author, ticket):
+        self.body = body
+        self.author = author
+        self.ticket = ticket
+        self.date = datetime.today()
+        self.active = True
 
 
     def __repr__(self):
@@ -82,8 +108,8 @@ class Settings(db.Model):
     __tablename__ = 'settings'
 
     id = db.Column(db.Integer, primary_key=True)
-    settings = db.Column(db.String)
-    value = db.Column(db.Integer)
+    setting = db.Column(db.String)
+    value = db.Column(db.String)
 
 
     def __init__(self, setting, value):

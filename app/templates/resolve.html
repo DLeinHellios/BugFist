@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}Ticket: {{ ticket['id'] }} | Resolve{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-xl-5 px-6 content-form">
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="alert alert-secondary" role="alert">
+            {{msg}}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <h1>Resolving Ticket: {{ ticket['id'] }}</h1>
+
+    <div class="form-group">
+      <input type="text" class="form-control" value="{{ ticket['title'] }}" readonly>
+    </div>
+
+    <div class="form-group">
+      <textarea class="form-control" name="body" rows=3 readonly>{{ ticket['body'] }}</textarea>
+    </div>
+
+    <hr>
+
+    <form method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      <div class="form-group">
+        <label for="resolution">Resolution</label>
+        <textarea class="form-control" name="resolution" rows=3 placeholder="Please write a description of the resolution..."></textarea>
+      </div>
+
+      <button type="submit" value="submit" class="btn btn-lg btn-outline-dark mx-auto">Submit</button>
+      <a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}" class="btn btn-lg btn-outline-dark" role="button">Back</a>
+    <form>
+  </div>
+</div>
+{% endblock %}
