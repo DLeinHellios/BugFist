@@ -55,4 +55,13 @@ footer {
 
 .content-form textarea {
   min-height: 150px;
+  max-height: 600px;
+}
+
+.note-form textarea {
+  min-height: 80px;
+  max-height: 400px;
+  margin-bottom: 18px;
+  font-size: 1rem;
+  padding: 8px;
 }

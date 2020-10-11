@@ -1,15 +1,25 @@
 {% extends "layout.html" %}
 
-{% block title %}Ticket: {{ ticket['id'] }} | View{% endblock %}
+{% block title %}Ticket:{{ ticket['id'] }} | View{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-xl-5 px-6 content-form">
 
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="alert alert-secondary" role="alert">
+            {{msg}}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
     {% if ticket['open'] == True %}
-      <h1>Ticket: {{ ticket['id'] }} - <span style="color:red">Open</span></h1>
+      <h1>Ticket:{{ ticket['id'] }} - <span style="color:red">Open</span></h1>
     {% else %}
-      <h1>Ticket: {{ ticket['id'] }} - <span style="color:green">Closed</span></h1>
+      <h1>Ticket:{{ ticket['id'] }} - <span style="color:green">Closed</span></h1>
     {% endif %}
 
     <div class="form-group">
@@ -47,19 +57,29 @@
         </div>
         <div class="col">
           <label for="raiseDate">Raise Date</label>
-          <input type="text" class="form-control" value="{{ ticket['raise_date'].strftime('%d/%m/%Y') }}" readonly>
+          <input type="text" class="form-control" value="{{ ticket['raise_date'].strftime('%m/%d/%Y') }}" readonly>
         </div>
       </div>
     </div>
 
+    {% if ticket['notes'] != [] %}
+      <hr>
+      <div class="form-group note-form">
+        <h3>Notes</h3>
+        {%  for note in ticket['notes'] %}
+          <textarea class="form-control" name="note_{{ note.id }}" rows=2 readonly>{{ note['author'].username }} on {{ note['date'].strftime('%m/%d/%Y') }},&#13;{{ note['body'] }}</textarea>
+        {% endfor %}
+      </div>
+    {% endif %}
+
     {% if ticket['open'] == True %}
       <a href="{{ url_for('resolve_page', ticketId=ticket['id']) }}" class="btn btn-lg btn-outline-dark" role="button">Resolve</a>
+      <a href="{{ url_for('note_page', ticketId=ticket['id']) }}" class="btn btn-lg btn-outline-dark" role="button">Add Note</a>
     {% else %}
       <div class="form-group">
         <hr>
         <h3>Resolution</h3>
-        <textarea class="form-control" name="resolution" rows=3 readonly>Resolved by {{ ticket['resolve_user'].username }} on {{ ticket['resolve_date'].strftime('%d/%m/%Y') }},&#13;{{ ticket['resolution'] }}
-        </textarea>
+        <textarea class="form-control" name="resolution" rows=3 readonly>Resolved by {{ ticket['resolve_user'].username }} on {{ ticket['resolve_date'].strftime('%m/%d/%Y') }},&#13;{{ ticket['resolution'] }}</textarea>
       </div>
     {% endif %}
 

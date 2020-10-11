@@ -51,17 +51,18 @@ class Ticket(db.Model):
     title = db.Column(db.String)
     body = db.Column(db.String)
     category_id = db.Column(db.Integer, ForeignKey(Category.id))
-    category = db.relationship("Category")
     raise_user_id = db.Column(db.Integer, ForeignKey(User.id))
-    raise_user = db.relationship("User", foreign_keys=raise_user_id)
     raise_date = db.Column(db.DateTime)
     priority = db.Column(db.Integer)
     open = db.Column(db.Boolean)
     resolution = db.Column(db.String)
-    resolve_user_id = db.Column(db.Integer, ForeignKey(User.id))
-    resolve_user = db.relationship("User", foreign_keys=resolve_user_id)
     resolve_date = db.Column(db.DateTime)
+    resolve_user_id = db.Column(db.Integer, ForeignKey(User.id))
 
+    category = db.relationship("Category")
+    raise_user = db.relationship("User", foreign_keys=raise_user_id)
+    resolve_user = db.relationship("User", foreign_keys=resolve_user_id)
+    notes = db.relationship("Note")
 
     def __init__(self, title, body, category_id, priority, raise_user_id):
         self.title = title
@@ -84,19 +85,16 @@ class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String)
     ticket_id = db.Column(db.Integer, ForeignKey(Ticket.id))
-    ticket = db.relationship("Ticket")
     author_id = db.Column(db.Integer, ForeignKey(User.id))
     author = db.relationship("User")
     date = db.Column(db.DateTime)
-    active = db.Column(db.Boolean)
 
 
     def __init__(self, body, author, ticket):
         self.body = body
-        self.author = author
-        self.ticket = ticket
+        self.author_id = author
+        self.ticket_id = ticket
         self.date = datetime.today()
-        self.active = True
 
 
     def __repr__(self):

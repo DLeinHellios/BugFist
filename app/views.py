@@ -79,7 +79,7 @@ def submit_page():
         if validate != '':
             # If ticket data is invalid, redirect back to submit
             flash(validate)
-            return render_template("submit.html", prefill=[request.form["title"], request.form["body"]], categories=Category.query.all())
+            return render_template("submit.html", prefill=[request.form["title"].rstrip(), request.form["body"].rstrip()], categories=Category.query.all())
         else:
             # Submit ticket and redirect to dashboard
             ticketManage.submit_ticket(request.form["title"], request.form["body"], request.form.get("category"), request.form.get("priority"))
@@ -131,19 +131,23 @@ def ticket_page(ticketId):
         return redirect(url_for("login_page"))
 
 
+# Resolution pages
 @app.route("/r/<ticketId>", methods=["POST", "GET"])
 def resolve_page(ticketId):
     ticket = Ticket.query.filter_by(id=ticketId).first()
 
     if request.method == "POST" and session['authLevel'] > 0:
-        if request.form["resolution"] != '':
+        validate = ticketManage.validate_ticket_addition(request.form["resolution"])
+
+        if validate == '':
             # Submit resolution
             ticketManage.resolve_ticket(ticket.id, request.form["resolution"])
+            flash("Ticket: {} has been resolved".format(ticket.id))
             return redirect(url_for("ticket_page", ticketId = ticket.id))
 
         else:
-            # Resolution is blank
-            flash("Please enter a resolution")
+            # Resolution is invalid
+            flash(validate)
             return redirect(url_for("resolve_page", ticketId = ticket.id))
 
     else:
@@ -154,6 +158,40 @@ def resolve_page(ticketId):
             else:
                 # User not permitted to resolve
                 flash("You lack permission to resolve this ticket")
+                return redirect(url_for("user_dashboard"))
+
+        else:
+            # No user logged-in, redirect to login page
+            flash("Please login to continue", "info")
+            return redirect(url_for("login_page"))
+
+
+# Notes Pages
+@app.route("/n/<ticketId>", methods=["POST", "GET"])
+def note_page(ticketId):
+    ticket = Ticket.query.filter_by(id=ticketId).first()
+
+    if request.method == "POST" and session['authLevel'] > 0:
+        validate = ticketManage.validate_ticket_addition(request.form["note"])
+        if validate == '':
+            # Submit note
+            ticketManage.add_note(ticket.id, request.form["note"])
+            flash("A note has been added to ticket: {}".format(ticket.id))
+            return redirect(url_for("ticket_page", ticketId = ticket.id))
+
+        else:
+            # Note is invalid
+            flash(validate)
+            return redirect(url_for("note_page", ticketId = ticket.id))
+
+    else:
+        if "username" in session:
+            if session['authLevel'] > 0 and ticket.open:
+                return render_template("note.html", ticket=ticket)
+
+            else:
+                # User not permitted to resolve
+                flash("You lack permission to perform this function")
                 return redirect(url_for("user_dashboard"))
 
         else:

@@ -1,6 +1,6 @@
 # BugFist - Bug Tracking in the Cloud
 
-Bugfist is a bug tracker/ticketing system written in Python and Flask and hosted with Heroku. The front-end is styled with Bootstrap, and the back-end is built on Heroku PostgreSQL. BugFist is still in development.
+Bugfist is a bug tracker/ticketing system written in Python and Flask and hosted with Heroku. The front-end is styled with Bootstrap, and the back-end is built on Heroku PostgreSQL. This project uses Alembic for simple database migrations. BugFist is still in development.
 
 ## Current Features
 
@@ -11,11 +11,10 @@ Bugfist is a bug tracker/ticketing system written in Python and Flask and hosted
 	- Simple and concise form
 	- Supports multiple products/categories
 - Resposive mobile-first UI with Bootstrap
-	- Usable on any device
+- Ticket management and workflow
 
 ## Planned Features
 
-- Ticket management and processing
 - Dynamic user dashboard
 - User/system administration pages
 

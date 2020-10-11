@@ -92,26 +92,48 @@ class TicketManage:
     def validate_new_ticket(self, title, body, category):
         '''Returns message to flash if ticket submission is invalid, otherwise returns blank string'''
         msg = ''
-        if title == '':
+        if title.rstrip() == '':
             msg = 'Tickets must include a title'
-        elif body == '':
+        elif body.rstrip() == '':
             msg = 'Tickets must include a description'
+        elif len(title) > 100:
+            msg = 'Title exceeds maximum length'
+        elif len(body) > 1000:
+            msg = 'Description exceeds maximum length'
 
         return msg
 
 
     def submit_ticket(self, title, body, category, priority):
         '''Writes a new ticket to the database'''
-        newTicket = Ticket(title, body, category, priority, session['userId'])
+        newTicket = Ticket(title.rstrip(), body.rstrip(), category, priority, session['userId'])
         db.session.add(newTicket)
         db.session.commit()
+
+
+    def validate_ticket_addition(self, addition):
+        '''Returns a message to flash if resolution or note is invalid, otherwise returns blank string'''
+        msg = ''
+        if addition.rstrip() == "":
+            msg = 'Please enter a resolution'
+        elif len(addition) > 600:
+            msg = 'Resolution exceeds maximum length'
+
+        return msg
 
 
     def resolve_ticket(self, id, resolution):
         '''Adds resolution data to an existing ticket'''
         ticket = Ticket.query.filter_by(id=id).first()
-        ticket.resolution = resolution
+        ticket.resolution = resolution.rstrip()
         ticket.resolve_user_id = session['userId']
         ticket.resolve_date = datetime.today()
         ticket.open = False
+        db.session.commit()
+
+
+    def add_note(self, ticketId, note):
+        '''Create a new ticket note in database'''
+        newNote = Note(note.rstrip(), session['userId'], ticketId)
+        db.session.add(newNote)
         db.session.commit()
