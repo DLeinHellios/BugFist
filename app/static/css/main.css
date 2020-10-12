@@ -65,3 +65,8 @@ footer {
   font-size: 1rem;
   padding: 8px;
 }
+
+.login-form {
+  max-width: 600px;
+  padding-bottom: 25px; 
+}

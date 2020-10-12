@@ -4,7 +4,8 @@
 
 {% block content %}
   <div class="row justify-content-center">
-    <div class="col-lg-5 px-4 content-form">
+    <div class="col-lg-6 px-4 login-form">
+
       {% with messages = get_flashed_messages() %}
         {% if messages %}
           {% for msg in messages %}
