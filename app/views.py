@@ -45,19 +45,22 @@ def logout_user():
 @app.route('/register', methods=["POST", "GET"])
 def register_user():
     if request.method == "POST":
+
+        # Validate reCAPTCHA
         if recaptcha.verify():
-            # Validate reCAPTCHA
             validate = userManage.validate_new_user(request.form["rUser"], request.form["rEmail"],
                 request.form["rPass0"], request.form["rPass1"], request.form["registerCode"])
         else:
             flash("Please complete the CAPTCHA to continue")
             return render_template("register.html", prefill=[request.form["rUser"], request.form["rEmail"]])
 
+
+        # Validate new user data
         if validate != '':
-            # Validate new user data
             flash(validate)
             return render_template("register.html", prefill=[request.form["rUser"], request.form["rEmail"]])
         else:
+            # Register user
             userManage.register_user(request.form["rUser"], request.form["rEmail"], request.form["rPass0"])
             userSession.auth(request.form["rUser"], request.form["rPass0"])
             return redirect(url_for("user_dashboard"))
@@ -111,18 +114,18 @@ def user_dashboard():
 def ticket_page(ticketId):
     if "username" in session:
         ticket = Ticket.query.filter_by(id=ticketId).first()
-        if session['username'] == ticket.raise_user.username or session['authLevel'] > 0:
-            if ticket != None:
+        if ticket != None:
+            if session['username'] == ticket.raise_user.username or session['authLevel'] > 0:
                 # Display ticket page
                 return render_template("ticket.html", ticket=ticket, categories=Category.query.all())
             else:
-                # Redirect to dashboard and flash ticket not found
-                flash("Ticket not found")
+                # User is not raise user and lacks access level to view
+                flash("You lack permission to view this ticket")
                 return redirect(url_for("user_dashboard"))
 
         else:
-            # User is not raise user and lacks access level to view
-            flash("You lack permission to view this ticket")
+            # Redirect to dashboard and flash ticket not found
+            flash("Ticket not found")
             return redirect(url_for("user_dashboard"))
 
     else:

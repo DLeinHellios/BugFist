@@ -34,7 +34,7 @@ class UserManage:
     def __init__(self):
         '''Sets default password settings'''
         self.min_pw_length = 8
-
+        self.max_username_length = 16
 
     def validate_password(self, password0, password1):
         '''Returns a message to flash if password fails validation, otherwise returns blank string'''
@@ -55,10 +55,13 @@ class UserManage:
         if '' in [username, email, password0, password1, registerCode]:
             msg = "Please complete all items to continue"
 
+        elif not username.isalnum():
+            msg = "Username can only contain letters and numbers"
+
         elif registerCode != os.environ['REGISTER_CODE']:
             msg = 'Invalid registration code'
 
-        elif len(username) > 16:
+        elif len(username) > self.max_username_length:
             msg = 'Username too long: max of 16 characters'
 
         elif User.query.filter_by(username=username).first() != None:
@@ -89,6 +92,12 @@ class UserManage:
 
 
 class TicketManage:
+    def __init__(self):
+        self.max_title_length = 100
+        self.max_body_length = 1000
+        self.max_addition_length = 600
+
+
     def validate_new_ticket(self, title, body, category):
         '''Returns message to flash if ticket submission is invalid, otherwise returns blank string'''
         msg = ''
@@ -96,9 +105,9 @@ class TicketManage:
             msg = 'Tickets must include a title'
         elif body.rstrip() == '':
             msg = 'Tickets must include a description'
-        elif len(title) > 100:
+        elif len(title) > self.max_title_length:
             msg = 'Title exceeds maximum length'
-        elif len(body) > 1000:
+        elif len(body) > self.max_body_length:
             msg = 'Description exceeds maximum length'
 
         return msg
@@ -116,7 +125,7 @@ class TicketManage:
         msg = ''
         if addition.rstrip() == "":
             msg = 'Please enter a resolution'
-        elif len(addition) > 600:
+        elif len(addition) > self.max_addition_length:
             msg = 'Resolution exceeds maximum length'
 
         return msg
