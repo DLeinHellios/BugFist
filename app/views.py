@@ -103,7 +103,11 @@ def submit_page():
 @app.route('/dashboard')
 def user_dashboard():
     if "username" in session:
-        return render_template("dashboard.html")
+        if session['authLevel'] > 0:
+            openTickets = Ticket.query.filter_by(open=True).all()
+        else:
+            openTickets = Ticket.query.filter(db.and_(Ticket.open==True, Ticket.raise_user_id==session['userId'])).all()
+        return render_template("dashboard.html", openTickets=openTickets, openCount = len(openTickets))
     else:
         flash("Please login to continue", "info")
         return redirect(url_for("login_page"))

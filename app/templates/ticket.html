@@ -38,12 +38,14 @@
         </div>
         <div class="col">
           <label for="priority">Priority</label>
-          {% if ticket['priority'] == 3 %}
+          {% if ticket['priority'] == 1 %}
             <input type="text" class="form-control" value="High" readonly>
           {% elif ticket['priority'] == 2 %}
             <input type="text" class="form-control" value="Medium" readonly>
-          {% else %}
+          {% elif ticket['priority'] == 3 %}
             <input type="text" class="form-control" value="Low" readonly>
+          {% else %}
+            <input type="text" class="form-control" value="N/A" readonly>
           {% endif %}
         </div>
       </div>
@@ -62,7 +64,7 @@
       </div>
     </div>
 
-    {% if ticket['notes'] != [] %}
+    {% if ticket['notes'] != [] and session['authLevel'] > 0 %}
       <hr>
       <div class="form-group note-form">
         <h3>Notes</h3>
@@ -73,8 +75,10 @@
     {% endif %}
 
     {% if ticket['open'] == True %}
-      <a href="{{ url_for('resolve_page', ticketId=ticket['id']) }}" class="btn btn-lg btn-outline-dark" role="button">Resolve</a>
-      <a href="{{ url_for('note_page', ticketId=ticket['id']) }}" class="btn btn-lg btn-outline-dark" role="button">Add Note</a>
+      {% if session['authLevel'] > 0 %}
+        <a href="{{ url_for('resolve_page', ticketId=ticket['id']) }}" class="btn btn-lg btn-outline-dark" role="button">Resolve</a>
+        <a href="{{ url_for('note_page', ticketId=ticket['id']) }}" class="btn btn-lg btn-outline-dark" role="button">Add Note</a>
+      {% endif %}
     {% else %}
       <div class="form-group">
         <hr>
