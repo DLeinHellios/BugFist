@@ -17,9 +17,9 @@
     {% endwith %}
 
     {% if ticket['open'] == True %}
-      <h1>Ticket:{{ ticket['id'] }} - <span style="color:red">Open</span></h1>
+      <h1>Ticket:{{ ticket['id'] }} - <span style="color:#C02E1D">Open</span></h1>
     {% else %}
-      <h1>Ticket:{{ ticket['id'] }} - <span style="color:green">Closed</span></h1>
+      <h1>Ticket:{{ ticket['id'] }} - <span style="color:#A2B86C">Closed</span></h1>
     {% endif %}
 
     <div class="form-group">

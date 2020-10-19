@@ -6,62 +6,162 @@
 <div class="row justify-content-center">
   <div class="col-xl-8 px-5 content-body">
 
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    {% for msg in messages %}
-      <div class="alert alert-secondary" role="alert">
-        {{msg}}
-      </div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="alert alert-secondary" role="alert">
+            {{msg}}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
-    <h2>Welcome back, {{session["username"]}}!</h2>
-    <p>Soon this will be a nice dashboard where standard users can view the status of their previous bug reports. The admins/contributors will be able to view all reports on this page. There will also be a prominent link to submit a new bug. Administrators will also be able to access this page, and submit bugs like a standard user. Administration of users will take place on a separate page.</p>
+    <!--- Chart Display --->
+    <div class="chart-area">
+      <div class="chart-container">
+                <h3>Ticket Status</h3>
+        <canvas id="openChart"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <h3>Current Priority</h3>
+        <canvas id="priorityChart"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <h3>Top Categories</h3>
+        <canvas id="categoryChart"></canvas>
+      </div>
+    </div>
     <hr>
 
-    <h3>Open Tickets: {{ openCount }}</h3>
+    <!--- Chart scripts below --->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script>
+      var open_ctx = document.getElementById('openChart').getContext('2d');
+      var open_chart = new Chart(open_ctx, {
+        // The type of chart we want to create
+        type: 'doughnut',
+
+        // The data for our dataset
+        data: {
+            labels: ['Open', 'Closed'],
+            datasets: [{
+              backgroundColor: ['#ddd', '#343A40'],
+              data: [{{ data['ticket_status']['open'] }}, {{ data['ticket_status']['closed'] }}]
+            }]
+          },
+
+        // Configuration options go here
+        options: {
+          legend: {
+            position: 'left'
+          }
+        }
+      });
+
+      var priority_ctx = document.getElementById('priorityChart').getContext('2d');
+      var priority_chart = new Chart(priority_ctx, {
+        // The type of chart we want to create
+        type: 'doughnut',
+
+        // The data for our dataset
+        data: {
+            labels: ['Low', 'Medium', 'High', 'N/A'],
+            datasets: [{
+              backgroundColor: ['#A2B86C','#EF8B2C','#C02E1D', '#343A40'],
+              data: [
+                {{ data['open_priority']['low'] }},
+                {{ data['open_priority']['med'] }},
+                {{ data['open_priority']['high'] }},
+                {{ data['open_priority']['na'] }}]
+            }]
+          },
+
+        // Configuration options go here
+        options: {
+          legend: {
+            position: 'left'
+          }
+        }
+      });
+
+      var category_ctx = document.getElementById('categoryChart').getContext('2d');
+      var category_chart = new Chart(category_ctx, {
+        // The type of chart we want to create
+        type: 'horizontalBar',
+
+        data: {
+            labels: [
+              '{{ data['top_categories'][0][0] }}',
+              '{{ data['top_categories'][1][0] }}',
+              '{{ data['top_categories'][2][0] }}'],
+            datasets: [{
+              backgroundColor: '#343A40',
+              data: [
+                '{{ data['top_categories'][0][1] }}',
+                '{{ data['top_categories'][1][1] }}',
+                '{{ data['top_categories'][2][1] }}',
+                1]
+            }]
+          },
+
+        options: {
+          legend: {
+            display: false
+          }
+        }
+      });
+    </script>
+
+
+    <h3>Open Tickets: {{ data['ticket_status']['open'] }}</h3>
     <div class="ticket-container">
       <table class="ticket-table">
         <tr>
           <th>ID</th>
           <th>Title</th>
           <th>Category</th>
-          <th>Raise User</th>
+          <th>Raise Date</th>
           <th>Priority</th>
         </tr>
 
-        {% for ticket in openTickets %}
-          <tr>
-            <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket['id'] }}</a></td>
-            <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket['title'] }}</a></td>
+        {% for ticket in tickets %}
+          {% if ticket['open'] == True %}
+            <tr>
+              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket['id'] }}</a></td>
+              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket['title'] }}</a></td>
 
-            {% if ticket.category == None %}
-              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">N/A</a></td>
-            {% else %}
-              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.category['name'] }}</a></td>
-            {% endif %}
+              {% if ticket.category == None %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">N/A</a></td>
+              {% else %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.category['name'] }}</a></td>
+              {% endif %}
 
-            <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.raise_user['username'] }}</a></td>
+              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.raise_date.strftime('%m/%d/%Y') }}</a></td>
 
-            {% if ticket['priority'] == 3 %}
-              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:green">Low</span></a></td>
-            {% elif ticket['priority'] == 2 %}
-              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:darkorange">Medium</span></a></td>
-            {% elif ticket['priority'] == 1 %}
-              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:red">High</span></a></td>
-            {% else %}
-              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">N/A</a></td>
-            {% endif %}
+              {% if ticket['priority'] == 3 %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:#A2B86C">Low</span></a></td>
+              {% elif ticket['priority'] == 2 %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:#EF8B2C">Medium</span></a></td>
+              {% elif ticket['priority'] == 1 %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:#C02E1D">High</span></a></td>
+              {% else %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">N/A</a></td>
+              {% endif %}
 
-          </tr>
+            </tr>
+          {% endif %}
         {% endfor %}
       </table>
 
-      {% if openTickets == [] %}
-      <p style="text-align:center; padding:40px; color:#888; font-size: 1.4rem;">No Open Tickets</p>
+      {% if data['ticket_status']['open'] == 0 %}
+      <p style="text-align:center; padding-top:100px; color:#888; font-size: 1.4rem;">No data to display</p>
       {% endif %}
     </div>
   </div>
 </div>
+
+
+
 {% endblock %}

@@ -146,3 +146,49 @@ class TicketManage:
         newNote = Note(note.rstrip(), session['userId'], ticketId)
         db.session.add(newNote)
         db.session.commit()
+
+
+    def get_dashboard_data(self, tickets):
+        '''Computes and returns values for charts on dashboard'''
+        data = {
+            "ticket_status": {"open":0, "closed":0},
+            "open_priority": {"low": 0, "med": 0, "high": 0, "na":0},
+            "category_counts": {"N/A": 0}}
+
+        for ticket in tickets:
+
+            # Status
+            if ticket.open:
+                data['ticket_status']['open'] += 1
+
+                # Priority
+                if ticket.priority == 3:
+                    data['open_priority']['low'] += 1
+                elif ticket.priority == 2:
+                    data['open_priority']['med'] += 1
+                elif ticket.priority == 1:
+                    data['open_priority']['high'] += 1
+                else:
+                    data['open_priority']['na'] += 1
+
+            else:
+                data['ticket_status']['closed'] += 1
+
+            # Category
+            if ticket.category == None:
+                data['category_counts']['N/A'] += 1
+
+            else:
+                if ticket.category.name in data['category_counts']:
+                    data['category_counts'][ticket.category.name] += 1
+                else:
+                    data['category_counts'][ticket.category.name] = 1
+
+
+        data['top_categories'] = [(name, count) for name, count in sorted(data['category_counts'].items())]
+
+        # Pad for bar chart
+        while len(data['top_categories']) < 3:
+            data['top_categories'] += [('',0)]
+
+        return data

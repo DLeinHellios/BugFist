@@ -6,8 +6,12 @@ from app.models import *
 # Main page
 @app.route('/')
 def main_page():
-    # Render static home page
-    return render_template("index.html")
+    if 'username' in session:
+        return redirect(url_for("user_dashboard"))
+
+    else:
+        # Render static home page
+        return render_template("index.html")
 
 
 # Login page
@@ -104,10 +108,16 @@ def submit_page():
 def user_dashboard():
     if "username" in session:
         if session['authLevel'] > 0:
-            openTickets = Ticket.query.filter_by(open=True).all()
+            # Render analyst/admin dashboard
+                tickets = Ticket.query.filter_by().all()
+                data = ticketManage.get_dashboard_data(tickets)
+                return render_template("dashboard.html", tickets=tickets, data=data)
+
         else:
-            openTickets = Ticket.query.filter(db.and_(Ticket.open==True, Ticket.raise_user_id==session['userId'])).all()
-        return render_template("dashboard.html", openTickets=openTickets, openCount = len(openTickets))
+            # Render standard user dashboard
+            tickets = Ticket.query.filter(db.and_(Ticket.raise_user_id == session['userId'], Ticket.open)).all()
+            return render_template("dashboard_user.html", tickets=tickets)
+
     else:
         flash("Please login to continue", "info")
         return redirect(url_for("login_page"))

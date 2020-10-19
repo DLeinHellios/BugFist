@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+
+{% block title %}BugFist | Dashboard{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-xl-8 px-5 content-body">
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="alert alert-secondary" role="alert">
+            {{msg}}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <h2>Welcome back, {{session["username"]}}!</h2>
+    <p>This is your own personal dashboard where you can track the status of all your tickets. Please use the links below to review past tickets, or submit and new one.</p>
+    <hr>
+
+    <h3>Your open tickets:</h3>
+    <div class="ticket-container">
+      <table class="ticket-table">
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Raise Date</th>
+          <th>Priority</th>
+        </tr>
+
+      {% if tickets == [] %}
+        </table>
+        <p style="text-align:center; padding-top:100px; color:#888; font-size: 1.4rem;">No data to display</p>
+      {% else %}
+        {% for ticket in tickets %}
+            <tr>
+              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket['id'] }}</a></td>
+              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket['title'] }}</a></td>
+
+              {% if ticket.category == None %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">N/A</a></td>
+              {% else %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.category['name'] }}</a></td>
+              {% endif %}
+
+              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.raise_date.strftime('%m/%d/%Y') }}</a></td>
+
+              {% if ticket['priority'] == 3 %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:green">Low</span></a></td>
+              {% elif ticket['priority'] == 2 %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:darkorange">Medium</span></a></td>
+              {% elif ticket['priority'] == 1 %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:red">High</span></a></td>
+              {% else %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">N/A</a></td>
+              {% endif %}
+            </tr>
+        {% endfor %}
+        </table>
+      {% endif %}
+    </div>
+    <!---<div class="dashboard-nav">
+      <a href="/dashboard" class="btn btn-dark" role="button">All Tickets</a>
+      <a href="/dashboard" class="btn btn-dark" role="button">Past Tickets</a>
+      <a href="/submit" class="btn btn-dark" role="button">New Ticket</a>
+    </div>--->
+  </div>
+</div>
+
+
+
+{% endblock %}

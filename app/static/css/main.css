@@ -80,7 +80,7 @@ footer {
   min-height: 200px;
   max-height: 800px;
   resize: vertical;
-  overflow-x: hidden;
+  overflow-x: scroll;
   overflow-y: auto;
   border: 1px solid #343A40;
   font-size: 1rem;
@@ -121,4 +121,42 @@ footer {
   color: white;
   position: sticky;
   top: 0;
+}
+
+.chart-area {
+  width: 100%;
+  margin: auto;
+  text-align: center;
+}
+
+.chart-container {
+  width: 100%;
+  padding: 20px 10px;
+  display: inline-block;
+}
+
+.dashboard-nav {
+  text-align: center;
+}
+
+@media only screen and (min-width: 768px){
+  .chart-container {
+    width: 45%;
+    padding: 0 10px;
+  }
+
+  .ticket-container {
+    overflow-x: hidden;
+  }
+
+  .dashboard-nav {
+    text-align: right;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .chart-container {
+    width: 30%;
+    padding: 0;
+  }
 }
