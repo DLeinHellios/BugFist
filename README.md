@@ -1,23 +1,49 @@
 # BugFist - Bug Tracking in the Cloud
 
-Bugfist is a bug tracker/ticketing system written in Python and Flask and hosted with Heroku. The front-end is styled with Bootstrap, and the back-end is built on Heroku PostgreSQL. This project uses Alembic for simple database migrations. BugFist is still in development.
+BugFist is a cloud-based ticketing platform written in Python and Flask. With a mobile-first UI with Bootstrap, your tickets are available on any device. Back-end is built on Postgres. BugFist is currently hosted on Heroku and is still in development.
 
 ## Current Features
 
-- Secure user login and registration
-	- Password encryption with bcrypt
+- Secure user accounts
+	- Passwords are stored encrypted
 	- Google reCAPTCHA support
-- Working ticket submission
-	- Simple and concise form
-	- Supports multiple products/categories
-- Resposive mobile-first UI with Bootstrap
-- Ticket management and workflow
+
+- Ticket submission and processing
+	- Simple, concise submission form
+	- Supports categories and priority assignment
+	- Attach notes to tickets
+	- Close tickets with resolution text
+
+- Dynamic user dashboard
+	- Separate dashboards by user role
+	- Accessible dashboard for standard users
+	- Responsive charts with Chart.js
+
+- Database management
+	- Hosted with Heroku Postgres
+	- Built with SQLAlchemy ORM
+	- Easy migrations with Alembic
+
+- Responsive mobile-first UI with Bootstrap
 
 ## Planned Features
 
-- Dynamic user dashboard
-- User/system administration pages
+- Admin configuration pages
+	- User roll management
+	- User metric charts
+	- Category management
+	- Basic system options
 
-<hr>
+- User account pages
+	- Change email/password
+	- Display user stats
 
-**Check out the live demo [here](http://bugfist-demo.herokuapp.com/)**
+<hr></hr>
+
+![Analyst Dashboard](screenshots/dashboard1.png?raw=true)
+
+![UserDashboard](screenshots/dashboard2.png?raw=true)
+
+<hr></hr>
+
+**Have demo credentials? check out the live demo [here](http://bugfist-demo.herokuapp.com/)**
