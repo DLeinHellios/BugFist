@@ -116,6 +116,13 @@ class TicketManage:
 
     def submit_ticket(self, title, body, category, priority):
         '''Writes a new ticket to the database'''
+
+        # Handle missing values
+        if category == '0':
+            category = None
+        if priority == '0':
+            priority = None
+
         newTicket = Ticket(title.rstrip(), body.rstrip(), category, priority, session['userId'])
         db.session.add(newTicket)
         db.session.commit()
@@ -154,7 +161,7 @@ class TicketManage:
         data = {
             "ticket_status": {"open":0, "closed":0},
             "open_priority": {"low": 0, "med": 0, "high": 0, "na":0},
-            "category_counts": {"N/A": 0}}
+            "category_counts": {"None": 0}}
 
         for ticket in tickets:
 
@@ -177,7 +184,7 @@ class TicketManage:
 
             # Category
             if ticket.category == None:
-                data['category_counts']['N/A'] += 1
+                data['category_counts']['None'] += 1
 
             else:
                 if ticket.category.name in data['category_counts']:

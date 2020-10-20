@@ -16,7 +16,9 @@
       {% endif %}
     {% endwith %}
 
-    <h1>Adding Note to Ticket:{{ ticket['id'] }}</h1>
+    <div class="ticket-header">
+      <h3>Adding Note to Ticket:{{ ticket['id'] }}</h3>
+    </div>
 
     <div class="form-group">
       <input type="text" class="form-control" value="{{ ticket['title'] }}" readonly>
@@ -31,12 +33,12 @@
     <form method="POST">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       <div class="form-group">
-        <label for="note">Note</label>
+        <label for="note">Note Message</label>
         <textarea class="form-control" name="note" rows=3 placeholder="Write your note here..."></textarea>
       </div>
 
-      <button type="submit" value="submit" class="btn btn-lg btn-outline-dark mx-auto">Submit</button>
-      <a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}" class="btn btn-lg btn-outline-dark" role="button">Back</a>
+      <button type="submit" value="submit" class="btn btn-dark">Submit</button>
+      <a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}" class="btn btn-dark" role="button">Back</a>
     <form>
   </div>
 </div>

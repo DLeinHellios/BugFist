@@ -16,7 +16,7 @@
         {% endif %}
       {% endwith %}
 
-      <h2>Sign-up</h2>
+      <h2>Register an Account</h2>
       <form method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class="form-group">
@@ -29,7 +29,7 @@
           <input type="password" class="form-control" name="rPass0" placeholder="Password (minimum 8 characters)">
         </div>
         <div class="form-group">
-          <input type="password" class="form-control" name="rPass1" placeholder="Password (again)">
+          <input type="password" class="form-control" name="rPass1" placeholder="Retype Password">
         </div>
         <div class="form-group">
           <input type="text" class="form-control" name="registerCode" placeholder="Registration Code (required)">
@@ -37,8 +37,11 @@
         <div class="form-group">
           {{ recaptcha }}
         </div>
-        <button type="submit" value="submit" class="btn btn-lg btn-outline-dark mx-auto">Submit</button>
+        <button type="submit" value="submit" class="btn btn-dark btn-block">Submit</button>
       </form>
+      <div class="account-links">
+        <p>Already have an account? <a href="/login">Login</a></p>
+      </div>
     </div>
   </div>
 {% endblock %}

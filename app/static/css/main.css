@@ -4,29 +4,15 @@ html {
   height: 100%;
 }
 
-body {
-  padding-bottom: 50px;
-}
-
+/* Bootstrap Classes */
 .navbar {
   margin-bottom: 0;
   border-radius: 0;
 }
 
-.form-control {
-  font-size: 1.2rem;
-}
-
 .form-control:focus {
     border-color: #000000;
     box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(255, 255, 255, 0.5);
-}
-
-footer {
-  height: 50px;
-  line-height: 50px;
-  position: fixed;
-  bottom: 0;
 }
 
 .btn {
@@ -37,8 +23,8 @@ footer {
   border-radius: 0;
 }
 
+/* Content Containers */
 .content-body {
-  font-size: 1.2rem;
   padding-bottom: 25px;
 }
 
@@ -70,7 +56,6 @@ footer {
   min-height: 80px;
   max-height: 400px;
   margin-bottom: 18px;
-  font-size: 1rem;
   padding: 8px;
 }
 
@@ -78,6 +63,26 @@ footer {
   max-width: 600px;
   padding-bottom: 25px;
 }
+
+.account-links p {
+  text-align: right;
+  padding: 6px 10px;
+}
+
+.ticket-header {
+  width: 100%;
+  color: white;
+  padding: 6px 10px;
+  margin-bottom: 12px;
+  background-color: #343A40;
+}
+
+.ticket-header h2,h3 {
+  padding: 0;
+  margin: 0;
+}
+
+/* Ticket Lists */
 
 .ticket-container {
   box-sizing: border-box;
@@ -94,10 +99,18 @@ footer {
   margin: 10px 0;
 }
 
+.search-container {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  border: 1px solid #343A40;
+  margin: 10px 0;
+}
+
+
 .ticket-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 1rem;
 }
 
 .ticket-table td a {
@@ -131,6 +144,7 @@ footer {
   top: 0;
 }
 
+/* Dashboard Charts */
 .chart-area {
   width: 100%;
   margin: auto;
@@ -138,8 +152,8 @@ footer {
 }
 
 .chart-container {
-  width: 100%;
-  padding: 20px 10px;
+  width: 70%;
+  padding: 0 10px;
   display: inline-block;
 }
 
@@ -151,13 +165,18 @@ footer {
   padding: 0 16px;
 }
 
+/* Media Queries */
 @media only screen and (min-width: 768px){
   .chart-container {
-    width: 45%;
+    width: 40%;
     padding: 0 10px;
   }
 
   .ticket-container {
+    overflow-x: hidden;
+  }
+
+  .search-container {
     overflow-x: hidden;
   }
 

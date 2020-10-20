@@ -34,15 +34,12 @@
             <label for="category">Category</label>
             <select class="form-control" name="category">
               <option style="display:none" disabled selected value >Select a Category</option>
-              {% if categories %}
-                {% for cat in categories %}
-                  {% if cat['active'] %}
-                    <option value="{{ cat['id' ]}}">{{ cat['name'] }}</option>
-                  {% endif %}
-                {%  endfor %}
-              {% else %}
-                <option disabled value>No categories available</option>
-              {% endif %}
+              <option value="0">None</option>
+              {% for cat in categories %}
+                {% if cat['active'] %}
+                  <option value="{{ cat['id' ]}}">{{ cat['name'] }}</option>
+                {% endif %}
+              {%  endfor %}
             </select>
           </div>
 
@@ -50,6 +47,7 @@
             <label for="priority">Priority</label>
             <select class="form-control" name="priority">
               <option style="display:none" disabled selected value >Select a Priority</option>
+              <option value="0">N/A</option>
               <option value="3">Low</option>
               <option value="2">Medium</option>
               <option value="1">High</option>
@@ -59,8 +57,8 @@
       </div>
 
 
-      <button type="submit" value="submit" class="btn btn-lg btn-outline-dark mx-auto">Submit</button>
-      <a href="/dashboard" class="btn btn-lg btn-outline-dark mx-auto" role="button">Cancel</a>
+      <button type="submit" value="submit" class="btn btn-dark">Submit</button>
+      <a href="/dashboard" class="btn btn-dark" role="button">Cancel</a>
     </form>
   </div>
 </div>

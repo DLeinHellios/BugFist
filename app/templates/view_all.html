@@ -1,12 +1,13 @@
 {% extends "layout.html" %}
 
-{% block title %}BugFist | Dashboard{% endblock %}
+{% block title %}BugFist | All Tickets{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-xl-8 px-5 content-body">
     <a href="/dashboard"><span style="font-size:.9rem"> <- Return to Dashboard</span></a>
-    <h3>All Tickets:</h3>
+    <h3>All Tickets</h3>
+    <div class="search-container">
       <table class="ticket-table">
         <tr>
           <th>ID</th>
@@ -27,7 +28,7 @@
               <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket['title'] }}</a></td>
 
               {% if ticket.category == None %}
-                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">N/A</a></td>
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">-</a></td>
               {% else %}
                 <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.category['name'] }}</a></td>
               {% endif %}
@@ -41,7 +42,7 @@
               {% elif ticket['priority'] == 1 %}
                 <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:#C02E1D">High</span></a></td>
               {% else %}
-                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">N/A</a></td>
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">-</a></td>
               {% endif %}
 
               {% if ticket['open'] == True %}
@@ -53,7 +54,10 @@
           {% endfor %}
           </table>
       {% endif %}
-
+    </div>
+    <div class="dashboard-nav">
+      <a href="/dashboard" class="btn btn-dark" role="button">Return to Dashboard</a>
+    </div>
   </div>
 </div>
 
