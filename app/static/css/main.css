@@ -29,6 +29,14 @@ footer {
   bottom: 0;
 }
 
+.btn {
+  border-radius: 0;
+}
+
+.form-control {
+  border-radius: 0;
+}
+
 .content-body {
   font-size: 1.2rem;
   padding-bottom: 25px;
@@ -80,16 +88,16 @@ footer {
   min-height: 200px;
   max-height: 800px;
   resize: vertical;
-  overflow-x: scroll;
+  overflow-x: auto;
   overflow-y: auto;
   border: 1px solid #343A40;
-  font-size: 1rem;
   margin: 10px 0;
 }
 
 .ticket-table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 1rem;
 }
 
 .ticket-table td a {
@@ -139,6 +147,10 @@ footer {
   text-align: center;
 }
 
+.dashboard-greeting {
+  padding: 0 16px;
+}
+
 @media only screen and (min-width: 768px){
   .chart-container {
     width: 45%;
@@ -158,5 +170,9 @@ footer {
   .chart-container {
     width: 30%;
     padding: 0;
+  }
+
+  .dashboard-greeting {
+    padding: 0 24px;
   }
 }

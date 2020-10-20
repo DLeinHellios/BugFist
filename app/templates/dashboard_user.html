@@ -16,11 +16,15 @@
       {% endif %}
     {% endwith %}
 
-    <h2>Welcome back, {{session["username"]}}!</h2>
-    <p>This is your own personal dashboard where you can track the status of all your tickets. Please use the links below to review past tickets, or submit and new one.</p>
+    <div class="dashboard-greeting">
+      <h2>Welcome back, {{session["username"]}}!</h2>
+      <p>This is your own personal dashboard where you can track the status of all your tickets. Please use the links below to review past tickets, or submit and new one.</p>
+      <a href="/submit" class="btn btn-dark" role="button">Submit a Ticket</a>
+      <a href="/logout" class="btn btn-dark" role="button">Logout</a>
+    </div>
     <hr>
 
-    <h3>Your open tickets:</h3>
+    <h3>Your Open Tickets:</h3>
     <div class="ticket-container">
       <table class="ticket-table">
         <tr>
@@ -36,37 +40,38 @@
         <p style="text-align:center; padding-top:100px; color:#888; font-size: 1.4rem;">No data to display</p>
       {% else %}
         {% for ticket in tickets %}
-            <tr>
-              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket['id'] }}</a></td>
-              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket['title'] }}</a></td>
+          <tr>
+            <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket['id'] }}</a></td>
+            <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket['title'] }}</a></td>
 
-              {% if ticket.category == None %}
-                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">N/A</a></td>
-              {% else %}
-                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.category['name'] }}</a></td>
-              {% endif %}
+            {% if ticket.category == None %}
+              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">N/A</a></td>
+            {% else %}
+              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.category['name'] }}</a></td>
+            {% endif %}
 
-              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.raise_date.strftime('%m/%d/%Y') }}</a></td>
+            <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.raise_date.strftime('%m/%d/%Y') }}</a></td>
 
-              {% if ticket['priority'] == 3 %}
-                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:green">Low</span></a></td>
-              {% elif ticket['priority'] == 2 %}
-                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:darkorange">Medium</span></a></td>
-              {% elif ticket['priority'] == 1 %}
-                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:red">High</span></a></td>
-              {% else %}
-                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">N/A</a></td>
-              {% endif %}
-            </tr>
+            {% if ticket['priority'] == 3 %}
+              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:#8DA25C">Low</span></a></td>
+            {% elif ticket['priority'] == 2 %}
+              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:#EF8B2C">Medium</span></a></td>
+            {% elif ticket['priority'] == 1 %}
+              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:#C02E1D">High</span></a></td>
+            {% else %}
+              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">N/A</a></td>
+            {% endif %}
+
+          </tr>
         {% endfor %}
         </table>
       {% endif %}
     </div>
-    <!---<div class="dashboard-nav">
-      <a href="/dashboard" class="btn btn-dark" role="button">All Tickets</a>
-      <a href="/dashboard" class="btn btn-dark" role="button">Past Tickets</a>
-      <a href="/submit" class="btn btn-dark" role="button">New Ticket</a>
-    </div>--->
+    <div class="dashboard-nav">
+      <a href="/dashboard/all" class="btn btn-dark" role="button">All Tickets</a>
+      <a href="/dashboard/open" class="btn btn-dark" role="button">Current Tickets</a>
+      <a href="/dashboard/closed" class="btn btn-dark" role="button">Past Tickets</a>
+    </div>
   </div>
 </div>
 

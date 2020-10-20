@@ -107,16 +107,72 @@ def submit_page():
 @app.route('/dashboard')
 def user_dashboard():
     if "username" in session:
+        session["lastPage"] = "/dashboard"
+
         if session['authLevel'] > 0:
             # Render analyst/admin dashboard
-                tickets = Ticket.query.filter_by().all()
+                tickets = Ticket.query.order_by(Ticket.raise_date.desc()).all()
                 data = ticketManage.get_dashboard_data(tickets)
                 return render_template("dashboard.html", tickets=tickets, data=data)
 
         else:
             # Render standard user dashboard
-            tickets = Ticket.query.filter(db.and_(Ticket.raise_user_id == session['userId'], Ticket.open)).all()
+            tickets = Ticket.query.filter(db.and_(Ticket.raise_user_id == session['userId'], Ticket.open)).order_by(Ticket.raise_date.desc()).all()
             return render_template("dashboard_user.html", tickets=tickets)
+
+    else:
+        flash("Please login to continue", "info")
+        return redirect(url_for("login_page"))
+
+
+# All tickets list
+@app.route('/dashboard/all')
+def view_all_tickets():
+    if "username" in session:
+        session["lastPage"] = "/dashboard/all"
+
+        if session['authLevel'] > 0:
+            tickets = Ticket.query.order_by(Ticket.raise_date.desc()).all()
+        else:
+            tickets = Ticket.query.filter_by(raise_user_id=session['userId']).order_by(Ticket.raise_date.desc()).all()
+
+        return render_template("view_all.html", tickets=tickets)
+
+    else:
+        flash("Please login to continue", "info")
+        return redirect(url_for("login_page"))
+
+
+# Open tickets list
+@app.route('/dashboard/open')
+def view_open_tickets():
+    if "username" in session:
+        session["lastPage"] = "/dashboard/open"
+
+        if session['authLevel'] > 0:
+            tickets = Ticket.query.filter_by(open=True).order_by(Ticket.raise_date.desc()).all()
+            return render_template("view_status.html", tickets=tickets, listTitle="All Open Tickets")
+        else:
+            tickets = Ticket.query.filter(db.and_(Ticket.raise_user_id == session['userId'], Ticket.open)).order_by(Ticket.raise_date.desc()).all()
+            return render_template("view_status.html", tickets=tickets, listTitle="My Open Tickets")
+
+    else:
+        flash("Please login to continue", "info")
+        return redirect(url_for("login_page"))
+
+
+# Closed tickets list
+@app.route('/dashboard/closed')
+def view_closed_tickets():
+    if "username" in session:
+        session["lastPage"] = "/dashboard/closed"
+
+        if session['authLevel'] > 0:
+            tickets = Ticket.query.filter_by(open=False).order_by(Ticket.raise_date.desc()).all()
+            return render_template("view_status.html", tickets=tickets, listTitle="All Closed Tickets")
+        else:
+            tickets = Ticket.query.filter(db.and_(Ticket.raise_user_id == session['userId'], Ticket.open == False)).order_by(Ticket.raise_date.desc()).all()
+            return render_template("view_status.html", tickets=tickets, listTitle="My Closed Tickets")
 
     else:
         flash("Please login to continue", "info")

@@ -19,7 +19,7 @@
     {% if ticket['open'] == True %}
       <h1>Ticket:{{ ticket['id'] }} - <span style="color:#C02E1D">Open</span></h1>
     {% else %}
-      <h1>Ticket:{{ ticket['id'] }} - <span style="color:#A2B86C">Closed</span></h1>
+      <h1>Ticket:{{ ticket['id'] }} - <span style="color:#8DA25C">Closed</span></h1>
     {% endif %}
 
     <div class="form-group">
@@ -87,7 +87,7 @@
       </div>
     {% endif %}
 
-    <a href="/dashboard" class="btn btn-lg btn-outline-dark" role="button">Back</a>
+    <a href="{{ session['lastPage'] }}" class="btn btn-lg btn-outline-dark" role="button">Back</a>
   </div>
 </div>
 {% endblock %}

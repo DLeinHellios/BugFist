@@ -10,6 +10,7 @@ class UserSession:
         session["userId"] = userData.id
         session["username"] = userData.username
         session["authLevel"] = userData.access
+        session["lastPage"] = "/dashboard"
 
 
     def auth(self, name, passwd):
@@ -93,7 +94,7 @@ class UserManage:
 
 class TicketManage:
     def __init__(self):
-        self.max_title_length = 100
+        self.max_title_length = 75
         self.max_body_length = 1000
         self.max_addition_length = 600
 

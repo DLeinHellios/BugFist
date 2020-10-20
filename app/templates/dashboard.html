@@ -69,7 +69,7 @@
         data: {
             labels: ['Low', 'Medium', 'High', 'N/A'],
             datasets: [{
-              backgroundColor: ['#A2B86C','#EF8B2C','#C02E1D', '#343A40'],
+              backgroundColor: ['#8DA25C','#EF8B2C','#C02E1D', '#ddd'],
               data: [
                 {{ data['open_priority']['low'] }},
                 {{ data['open_priority']['med'] }},
@@ -114,7 +114,6 @@
       });
     </script>
 
-
     <h3>Open Tickets: {{ data['ticket_status']['open'] }}</h3>
     <div class="ticket-container">
       <table class="ticket-table">
@@ -141,7 +140,7 @@
               <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.raise_date.strftime('%m/%d/%Y') }}</a></td>
 
               {% if ticket['priority'] == 3 %}
-                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:#A2B86C">Low</span></a></td>
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:#8DA25C">Low</span></a></td>
               {% elif ticket['priority'] == 2 %}
                 <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:#EF8B2C">Medium</span></a></td>
               {% elif ticket['priority'] == 1 %}
@@ -158,6 +157,11 @@
       {% if data['ticket_status']['open'] == 0 %}
       <p style="text-align:center; padding-top:100px; color:#888; font-size: 1.4rem;">No data to display</p>
       {% endif %}
+    </div>
+    <div class="dashboard-nav">
+      <a href="/dashboard/all" class="btn btn-dark" role="button">All Tickets</a>
+      <a href="/dashboard/open" class="btn btn-dark" role="button">Open Tickets</a>
+      <a href="/dashboard/closed" class="btn btn-dark" role="button">Closed Tickets</a>
     </div>
   </div>
 </div>

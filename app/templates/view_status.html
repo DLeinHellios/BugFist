@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block title %}BugFist | Dashboard{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-xl-8 px-5 content-body">
+    <a href="/dashboard"><span style="font-size:.9rem"> <- Return to Dashboard</span></a>
+    <h3>{{ listTitle }}</h3>
+      <table class="ticket-table">
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Raise User</th>
+          <th>Raise Date</th>
+          <th>Priority</th>
+        </tr>
+
+      {% if tickets == [] %}
+        </table>
+          <p style="text-align:center; padding-top:100px; color:#888; font-size: 1.4rem;">No data to display</p>
+        {% else %}
+          {% for ticket in tickets %}
+            <tr>
+              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket['id'] }}</a></td>
+              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket['title'] }}</a></td>
+
+              {% if ticket.category == None %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">N/A</a></td>
+              {% else %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.category['name'] }}</a></td>
+              {% endif %}
+
+              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.raise_user.username }}</a></td>
+
+              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.raise_date.strftime('%m/%d/%Y') }}</a></td>
+
+              {% if ticket['priority'] == 3 %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:#8DA25C">Low</span></a></td>
+              {% elif ticket['priority'] == 2 %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:#EF8B2C">Medium</span></a></td>
+              {% elif ticket['priority'] == 1 %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:#C02E1D">High</span></a></td>
+              {% else %}
+                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">N/A</a></td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+          </table>
+      {% endif %}
+
+  </div>
+</div>
+
+
+
+{% endblock %}
