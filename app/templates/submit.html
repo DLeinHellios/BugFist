@@ -34,12 +34,12 @@
             <label for="category">Category</label>
             <select class="form-control" name="category">
               <option style="display:none" disabled selected value >Select a Category</option>
-              <option value="0">None</option>
               {% for cat in categories %}
                 {% if cat['active'] %}
                   <option value="{{ cat['id' ]}}">{{ cat['name'] }}</option>
                 {% endif %}
               {%  endfor %}
+              <option value="0">No Applicable Category</option>
             </select>
           </div>
 

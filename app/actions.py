@@ -160,8 +160,9 @@ class TicketManage:
         '''Computes and returns values for charts on dashboard'''
         data = {
             "ticket_status": {"open":0, "closed":0},
-            "open_priority": {"low": 0, "med": 0, "high": 0, "na":0},
-            "category_counts": {"None": 0}}
+            "open_priority": {"low": 0, "med": 0, "high": 0, "na":0}}
+
+        category_counts = {"None": 0}
 
         for ticket in tickets:
 
@@ -184,19 +185,21 @@ class TicketManage:
 
             # Category
             if ticket.category == None:
-                data['category_counts']['None'] += 1
+                category_counts['None'] += 1
 
             else:
-                if ticket.category.name in data['category_counts']:
-                    data['category_counts'][ticket.category.name] += 1
+                if ticket.category.name in category_counts:
+                    category_counts[ticket.category.name] += 1
                 else:
-                    data['category_counts'][ticket.category.name] = 1
+                    category_counts[ticket.category.name] = 1
 
 
-        data['top_categories'] = [(name, count) for name, count in sorted(data['category_counts'].items())]
+        data['top_categories'] = sorted(category_counts.items(), key=lambda x:x[1], reverse=True)
 
         # Pad for bar chart
         while len(data['top_categories']) < 3:
             data['top_categories'] += [('',0)]
+
+        print(data['top_categories'])
 
         return data

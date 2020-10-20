@@ -96,7 +96,7 @@ def submit_page():
     else:
         if "username" in session:
             # Render submit page to logged-in users
-            return render_template("submit.html", prefill = ['',''], categories=Category.query.all())
+            return render_template("submit.html", prefill = ['',''], categories=Category.query.order_by(Category.name).all())
         else:
             # No user logged-in, redirect to login page
             flash("Please login to continue", "info")

@@ -40,10 +40,8 @@
     <script>
       var open_ctx = document.getElementById('openChart').getContext('2d');
       var open_chart = new Chart(open_ctx, {
-        // The type of chart we want to create
         type: 'doughnut',
 
-        // The data for our dataset
         data: {
             labels: ['Open', 'Closed'],
             datasets: [{
@@ -52,7 +50,6 @@
             }]
           },
 
-        // Configuration options go here
         options: {
           legend: {
             position: 'left'
@@ -62,10 +59,8 @@
 
       var priority_ctx = document.getElementById('priorityChart').getContext('2d');
       var priority_chart = new Chart(priority_ctx, {
-        // The type of chart we want to create
         type: 'doughnut',
 
-        // The data for our dataset
         data: {
             labels: ['Low', 'Medium', 'High', 'N/A'],
             datasets: [{
@@ -78,7 +73,6 @@
             }]
           },
 
-        // Configuration options go here
         options: {
           legend: {
             position: 'left'
@@ -88,7 +82,6 @@
 
       var category_ctx = document.getElementById('categoryChart').getContext('2d');
       var category_chart = new Chart(category_ctx, {
-        // The type of chart we want to create
         type: 'horizontalBar',
 
         data: {
@@ -102,7 +95,7 @@
                 '{{ data['top_categories'][0][1] }}',
                 '{{ data['top_categories'][1][1] }}',
                 '{{ data['top_categories'][2][1] }}',
-                1]
+                0]
             }]
           },
 
@@ -165,7 +158,4 @@
     </div>
   </div>
 </div>
-
-
-
 {% endblock %}
