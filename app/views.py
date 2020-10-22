@@ -86,7 +86,8 @@ def submit_page():
         if validate != '':
             # If ticket data is invalid, redirect back to submit
             flash(validate)
-            return render_template("submit.html", prefill=[request.form["title"].rstrip(), request.form["body"].rstrip()], categories=Category.query.all())
+            return render_template("submit.html", prefill=[request.form["title"].rstrip(), request.form["body"].rstrip()], categories=Category.query.filter_by(active=True).order_by(Category.name).all())
+
         else:
             # Submit ticket and redirect to dashboard
             ticketManage.submit_ticket(request.form["title"], request.form["body"], request.form.get("category"), request.form.get("priority"))
@@ -96,7 +97,8 @@ def submit_page():
     else:
         if "username" in session:
             # Render submit page to logged-in users
-            return render_template("submit.html", prefill = ['',''], categories=Category.query.order_by(Category.name).all())
+            return render_template("submit.html", prefill = ['',''], categories=Category.query.filter_by(active=True).order_by(Category.name).all())
+
         else:
             # No user logged-in, redirect to login page
             flash("Please login to continue", "info")
@@ -110,17 +112,24 @@ def user_dashboard():
         session["lastPage"] = "/dashboard"
 
         if session['authLevel'] > 0:
-            # Render analyst/admin dashboard
-                tickets = Ticket.query.order_by(Ticket.raise_date.desc()).all()
-                data = ticketManage.get_dashboard_data(tickets)
+            # Render analyst/admin dashboard (this is the only spot where we over-query for charts)
+                tickets = Ticket.query.filter( # All tickets with active categories
+                    db.or_(Ticket.category==None, Category.active==True)
+                    ).outerjoin(Category).order_by(Ticket.raise_date.desc()).all()
+
+                data = ticketManage.get_dashboard_data(tickets) # Chart data
                 return render_template("dashboard.html", tickets=tickets, data=data)
 
         else:
             # Render standard user dashboard
-            tickets = Ticket.query.filter(db.and_(Ticket.raise_user_id == session['userId'], Ticket.open)).order_by(Ticket.raise_date.desc()).all()
+            tickets = Ticket.query.filter( # Logged-in user's open tickets
+                db.and_(Ticket.raise_user_id==session['userId'], Ticket.open, db.or_(Ticket.category==None, Category.active==True))
+                ).outerjoin(Category).order_by(Ticket.raise_date.desc()).all()
+
             return render_template("dashboard_user.html", tickets=tickets)
 
     else:
+        # No user logged-in - redirect
         flash("Please login to continue", "info")
         return redirect(url_for("login_page"))
 
@@ -132,13 +141,21 @@ def view_all_tickets():
         session["lastPage"] = "/dashboard/all"
 
         if session['authLevel'] > 0:
-            tickets = Ticket.query.order_by(Ticket.raise_date.desc()).all()
+            # All admin/analyst tickets
+            tickets = Ticket.query.filter( # All tickets from active categories
+                db.or_(Ticket.category==None, Category.active==True)
+                ).outerjoin(Category).order_by(Ticket.raise_date.desc()).all()
+
         else:
-            tickets = Ticket.query.filter_by(raise_user_id=session['userId']).order_by(Ticket.raise_date.desc()).all()
+            # All logged-in user's tickets
+            tickets = Ticket.query.filter( # All tickets from active categories submitted by logged-in user
+               db.and_(Ticket.raise_user_id==session['userId'], db.or_(Ticket.category==None, Category.active==True))
+               ).outerjoin(Category).order_by(Ticket.raise_date.desc()).all()
 
         return render_template("view_all.html", tickets=tickets)
 
     else:
+        # No user logged-in - redirect
         flash("Please login to continue", "info")
         return redirect(url_for("login_page"))
 
@@ -150,13 +167,23 @@ def view_open_tickets():
         session["lastPage"] = "/dashboard/open"
 
         if session['authLevel'] > 0:
-            tickets = Ticket.query.filter_by(open=True).order_by(Ticket.raise_date.desc()).all()
+            # Open admin/analyst tickets
+            tickets = Ticket.query.filter( # Open tickets from active categories
+                db.and_(Ticket.open, db.or_(Ticket.category==None, Category.active==True))
+                ).outerjoin(Category).order_by(Ticket.raise_date.desc()).all()
+
             return render_template("view_status.html", tickets=tickets, listTitle="All Open Tickets")
+
         else:
-            tickets = Ticket.query.filter(db.and_(Ticket.raise_user_id == session['userId'], Ticket.open)).order_by(Ticket.raise_date.desc()).all()
+            # Open logged-in user's tickets
+            tickets = Ticket.query.filter( # Logged-in user's open tickets
+                db.and_(Ticket.raise_user_id==session['userId'], Ticket.open, db.or_(Ticket.category==None, Category.active==True))
+                ).outerjoin(Category).order_by(Ticket.raise_date.desc()).all()
+
             return render_template("view_status.html", tickets=tickets, listTitle="My Open Tickets")
 
     else:
+        # No user logged-in - redirect
         flash("Please login to continue", "info")
         return redirect(url_for("login_page"))
 
@@ -168,13 +195,22 @@ def view_closed_tickets():
         session["lastPage"] = "/dashboard/closed"
 
         if session['authLevel'] > 0:
-            tickets = Ticket.query.filter_by(open=False).order_by(Ticket.raise_date.desc()).all()
+            # Closed admin/analyst tickets
+            tickets = Ticket.query.filter( # Closed tickets from active categories
+                db.and_(Ticket.open==False, db.or_(Ticket.category==None, Category.active==True))
+                ).outerjoin(Category).order_by(Ticket.raise_date.desc()).all()
+
             return render_template("view_status.html", tickets=tickets, listTitle="All Closed Tickets")
+
         else:
-            tickets = Ticket.query.filter(db.and_(Ticket.raise_user_id == session['userId'], Ticket.open == False)).order_by(Ticket.raise_date.desc()).all()
+            # Closed logged-in user's tickets
+            tickets = Ticket.query.filter( # Closed tickets from logged-in user with active categories
+                db.and_(Ticket.raise_user_id==session['userId'], Ticket.open==False, db.or_(Ticket.category==None, Category.active==True))
+                ).order_by(Ticket.raise_date.desc()).all()
             return render_template("view_status.html", tickets=tickets, listTitle="My Closed Tickets")
 
     else:
+        # No user logged-in - redirect
         flash("Please login to continue", "info")
         return redirect(url_for("login_page"))
 
