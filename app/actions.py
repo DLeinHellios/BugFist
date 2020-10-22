@@ -99,7 +99,7 @@ class UserManage:
         submit_counter = {}
 
         for user in users:
-            if user.enabled: # Filter disabled users from
+            if user.enabled: # Filter disabled users from charts
                 data['role_counts'][user.access] += 1
                 submit_counter[user.username] = len(user.submissions)
 
@@ -190,11 +190,11 @@ class TicketManage:
             "ticket_status": {"open":0, "closed":0},
             "open_priority": {"low": 0, "med": 0, "high": 0, "na":0}}
 
-        category_counts = {"None": 0}
+        category_counts = {'Uncategorized': 0}
 
         for ticket in tickets:
 
-            # Status
+            # Open tickets
             if ticket.open:
                 data['ticket_status']['open'] += 1
 
@@ -208,18 +208,20 @@ class TicketManage:
                 else:
                     data['open_priority']['na'] += 1
 
+                # Category
+                if ticket.category == None:
+                    category_counts['Uncategorized'] += 1
+
+                else:
+                    if ticket.category.name in category_counts:
+                        category_counts[ticket.category.name] += 1
+                    else:
+                        category_counts[ticket.category.name] = 1
+
+            # Closed tickets
             else:
                 data['ticket_status']['closed'] += 1
 
-            # Category
-            if ticket.category == None:
-                category_counts['None'] += 1
-
-            else:
-                if ticket.category.name in category_counts:
-                    category_counts[ticket.category.name] += 1
-                else:
-                    category_counts[ticket.category.name] = 1
 
 
         data['top_categories'] = sorted(category_counts.items(), key=lambda x:x[1], reverse=True)

@@ -124,7 +124,7 @@ html {
 }
 
 .ticket-table td {
-  border: 1px solid #ddd;
+  border: 1px solid #CCCCCC;
 }
 
 .ticket-table tr:nth-child(even){
@@ -132,7 +132,7 @@ html {
 }
 
 .ticket-table tr:hover {
-  background-color: #ddd;
+  background-color: #CCCCCC;
 }
 
 .ticket-table th {

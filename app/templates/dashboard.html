@@ -45,7 +45,7 @@
         data: {
             labels: ['Open', 'Closed'],
             datasets: [{
-              backgroundColor: ['#ddd', '#343A40'],
+              backgroundColor: ['#CCCCCC', '#343A40'],
               data: [{{ data['ticket_status']['open'] }}, {{ data['ticket_status']['closed'] }}]
             }]
           },
@@ -62,13 +62,13 @@
         type: 'doughnut',
 
         data: {
-            labels: ['Low', 'Medium', 'High', 'N/A'],
+            labels: ['High', 'Medium', 'Low', 'N/A'],
             datasets: [{
-              backgroundColor: ['#8DA25C','#EF8B2C','#C02E1D', '#ddd'],
+              backgroundColor: ['#C02E1D','#EF8B2C','#8DA25C', '#CCCCCC'],
               data: [
-                {{ data['open_priority']['low'] }},
-                {{ data['open_priority']['med'] }},
                 {{ data['open_priority']['high'] }},
+                {{ data['open_priority']['med'] }},
+                {{ data['open_priority']['low'] }},
                 {{ data['open_priority']['na'] }}]
             }]
           },
@@ -90,11 +90,11 @@
               '{{ data['top_categories'][1][0] }}',
               '{{ data['top_categories'][2][0] }}'],
             datasets: [{
-              backgroundColor: '#343A40',
+              backgroundColor: ['#343A40','#898989','#CCCCCC'],
               data: [
-                '{{ data['top_categories'][0][1] }}',
-                '{{ data['top_categories'][1][1] }}',
-                '{{ data['top_categories'][2][1] }}',
+                {{ data['top_categories'][0][1] }},
+                {{ data['top_categories'][1][1] }},
+                {{ data['top_categories'][2][1] }},
                 0]
             }]
           },
