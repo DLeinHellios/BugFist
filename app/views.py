@@ -276,10 +276,16 @@ def note_page(ticketId):
 # Admin dashboard
 @app.route("/admin")
 def admin_dashboard():
-    if "username" in session and session["authLevel"] == 2:
-        return render_template("admin.html")
+    if "username" in session and session["authLevel"] > 1:
+        users = User.query.filter_by(enabled=True).all()
+        data = userManage.get_user_data(users)
+
+        return render_template("admin.html", data=data)
+
     elif "username" in session:
+        flash("You lack permission to perform this function")
         return redirect(url_for("user_dashboard"))
+
     else:
         flash("Please login to continue", "info")
         return redirect(url_for("login_page"))

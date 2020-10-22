@@ -12,6 +12,9 @@ class User(db.Model):
     hash = db.Column(db.String(60))
     access = db.Column(db.Integer)
     enabled = db.Column(db.Boolean)
+    submissions = db.relationship("Ticket", foreign_keys="Ticket.raise_user_id", back_populates="raise_user")
+    resolutions = db.relationship("Ticket", foreign_keys="Ticket.resolve_user_id", back_populates="resolve_user")
+
 
     def __init__(self, username, email, hash, access):
         self.username = username
@@ -60,8 +63,8 @@ class Ticket(db.Model):
     resolve_user_id = db.Column(db.Integer, ForeignKey(User.id))
 
     category = db.relationship("Category")
-    raise_user = db.relationship("User", foreign_keys=raise_user_id)
-    resolve_user = db.relationship("User", foreign_keys=resolve_user_id)
+    raise_user = db.relationship("User", foreign_keys=raise_user_id, back_populates="submissions")
+    resolve_user = db.relationship("User", foreign_keys=resolve_user_id, back_populates="resolutions")
     notes = db.relationship("Note")
 
     def __init__(self, title, body, category_id, priority, raise_user_id):

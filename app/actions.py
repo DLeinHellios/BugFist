@@ -91,12 +91,40 @@ class UserManage:
         db.session.commit()
 
 
+    def get_user_data(self, users):
+        '''Returns user data for admin config charts'''
+        data = {
+            "role_counts": [0,0,0]} # Count roles by access level - 0,1,2
+        resolve_counter = {}
+        submit_counter = {}
+
+        for user in users:
+            if user.enabled: # Filter disabled users from
+                data['role_counts'][user.access] += 1
+                submit_counter[user.username] = len(user.submissions)
+
+                if user.access > 0: # Filter standard users from resolve counts
+                    resolve_counter[user.username] = len(user.resolutions)
+
+        data['resolve_counts'] = sorted(resolve_counter.items(), key=lambda x:x[1], reverse=True)
+        data['submit_counts'] = sorted(submit_counter.items(), key=lambda x:x[1], reverse=True)
+
+        # Pad for bar chart
+        while len(data['resolve_counts']) < 3:
+            data['resolve_counts'] += [('',0)]
+
+        while len(data['submit_counts']) < 3:
+            data['submit_counts'] += [('',0)]
+
+        return data
+
+
 
 class TicketManage:
     def __init__(self):
         self.max_title_length = 75
         self.max_body_length = 1000
-        self.max_addition_length = 600
+        self.max_addition_length = 600 # For notes and resolution text
 
 
     def validate_new_ticket(self, title, body, category):
@@ -199,7 +227,5 @@ class TicketManage:
         # Pad for bar chart
         while len(data['top_categories']) < 3:
             data['top_categories'] += [('',0)]
-
-        print(data['top_categories'])
 
         return data

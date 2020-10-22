@@ -4,10 +4,120 @@
 
 {% block content %}
 <div class="row justify-content-center">
-  <div class="col-lg-5 px-5 content-body">
-    <h2>Admin Configuration Page</h2>
-    <p>This is going to be an admin page, where administrative users can manage other users. We are going to make extra certain we don't do something silly, such as admins to remove their own rights. Maybe we can add some extra settings here too, why not?</p>
+  <div class="col-xl-8 px-5 content-body">
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="alert alert-secondary" role="alert">
+            {{msg}}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="chart-area">
+      <div class="chart-container">
+                <h3>Top Resolvers</h3>
+        <canvas id="topResolver"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <h3>Users by Role</h3>
+        <canvas id="userRole"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <h3>Top Submitters</h3>
+        <canvas id="topSubmit"></canvas>
+      </div>
+    </div>
     <hr>
+
+    <!--- Chart scripts below --->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script>
+      var resolve_ctx = document.getElementById('topResolver').getContext('2d');
+      var resolve_chart = new Chart(resolve_ctx, {
+        type: 'horizontalBar',
+
+        data: {
+            labels: [
+              '{{ data['resolve_counts'][0][0] }}',
+              '{{ data['resolve_counts'][1][0] }}',
+              '{{ data['resolve_counts'][2][0] }}'],
+            datasets: [{
+              backgroundColor: ['#343A40','#898989','#CCCCCC'],
+              data: [
+              {{ data['resolve_counts'][0][1] }},
+              {{ data['resolve_counts'][1][1] }},
+              {{ data['resolve_counts'][2][1] }},
+                0]
+            }]
+          },
+
+        options: {
+          legend: {
+            display: false
+          }
+        }
+      });
+
+      var role_ctx = document.getElementById('userRole').getContext('2d');
+      var role_chart = new Chart(role_ctx, {
+        type: 'doughnut',
+
+        data: {
+            labels: ['Admin', 'Analyst', 'User'],
+            datasets: [{
+              backgroundColor: ['#A45FBE','#117899','#CCCCCC'],
+              data: [
+                {{ data['role_counts'][2] }},
+                {{ data['role_counts'][1] }},
+                {{ data['role_counts'][0] }}]
+            }]
+          },
+
+        options: {
+          legend: {
+            position: 'left'
+          }
+        }
+      });
+
+      var submit_ctx = document.getElementById('topSubmit').getContext('2d');
+      var submit_chart = new Chart(submit_ctx, {
+        type: 'horizontalBar',
+
+        data: {
+            labels: [
+              '{{ data['submit_counts'][0][0] }}',
+              '{{ data['submit_counts'][1][0] }}',
+              '{{ data['submit_counts'][2][0] }}'],
+            datasets: [{
+              backgroundColor: ['#343A40','#898989','#CCCCCC'],
+              data: [
+                {{ data['submit_counts'][0][1] }},
+                {{ data['submit_counts'][1][1] }},
+                {{ data['submit_counts'][2][1] }},
+                0]
+            }]
+          },
+
+        options: {
+          legend: {
+            display: false
+          }
+        }
+      });
+    </script>
+<!---
+    <h3>Manage Users</h3>
+    <hr>
+    <h3>Manage Categories</h3>
+    <hr>
+    <h3>System Settings</h3>
+-->
   </div>
 </div>
 {% endblock %}
