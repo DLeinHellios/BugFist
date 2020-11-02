@@ -86,7 +86,7 @@ def submit_page():
         if validate != '':
             # If ticket data is invalid, redirect back to submit
             flash(validate)
-            return render_template("submit.html", prefill=[request.form["title"].rstrip(), request.form["body"].rstrip()], categories=Category.query.filter_by(active=True).order_by(Category.name).all())
+            return render_template("submit.html", prefill=[request.form["title"].strip(), request.form["body"].strip()], categories=Category.query.filter_by(active=True).order_by(Category.name).all())
 
         else:
             # Submit ticket and redirect to dashboard
@@ -311,20 +311,72 @@ def note_page(ticketId):
 
 # Admin dashboard
 @app.route("/admin")
-def admin_dashboard():
-    if "username" in session and session["authLevel"] > 1:
-        users = User.query.filter_by(enabled=True).all()
-        data = userManage.get_user_data(users)
+def configuration_page():
 
-        return render_template("admin.html", data=data)
+        if "username" in session and session["authLevel"] > 1:
+            # Render admin config page
+            users = User.query.filter_by(enabled=True).all()
+            data = userManage.get_user_data(users)
+            return render_template("admin.html", data=data)
 
-    elif "username" in session:
-        flash("You lack permission to perform this function")
-        return redirect(url_for("user_dashboard"))
+        elif "username" in session:
+            # Redirect standard users + analysts to dashboard
+            flash("You lack permission to perform this function")
+            return redirect(url_for("user_dashboard"))
+
+        else:
+            # No user logged-in - redirect to login
+            flash("Please login to continue", "info")
+            return redirect(url_for("login_page"))
+
+
+# Category Edit Pages
+@app.route("/c/<catId>", methods=["POST", "GET"])
+def category_page(catId):
+    category = Category.query.filter_by(id=catId).first()
+
+    if request.method == "POST" and session['authLevel'] > 1:
+        if request.form["cat_name"].strip() != '':
+            # Name is not blank, commit edit in db
+            category.name = request.form["cat_name"].strip()
+            category.description = request.form["description"].strip()
+
+            if request.form.get('activeCheck'):
+                category.active = True
+            else:
+                category.active = False
+
+            db.session.commit()
+
+            # Redirect to dashboard
+            flash("Category:{} has been edited successfully".format(category.id))
+            return redirect(url_for("configuration_page"))
+
+        else:
+            # Category name is blank, render template again
+            return render_template("category.html", category=category)           
 
     else:
-        flash("Please login to continue", "info")
-        return redirect(url_for("login_page"))
+        if "username" in session and session["authLevel"] > 1:
+            if category != None:
+                # Render category config page
+                return render_template("category.html", category=category)
+
+            else:
+                # Invalid category id
+                flash("Category not found")
+                return redirect(url_for("configuration_page"))
+
+
+        elif "username" in session:
+            # Redirect standard users + analysts to dashboard
+            flash("You lack permission to perform this function")
+            return redirect(url_for("user_dashboard"))
+
+        else:
+            # No user logged-in - redirect to login
+            flash("Please login to continue", "info")
+            return redirect(url_for("login_page"))
 
 
 #----- Errors -----
