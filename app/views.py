@@ -1,6 +1,6 @@
 from flask import render_template, url_for, redirect, request, session, flash
 from flask_wtf.csrf import CSRFError
-from app import app, recaptcha, userSession, userManage, ticketManage
+from app import app, recaptcha, userSession, userManage, ticketManage, categoryManage
 from app.models import *
 
 # Main page
@@ -315,9 +315,10 @@ def configuration_page():
 
         if "username" in session and session["authLevel"] > 1:
             # Render admin config page
-            users = User.query.filter_by(enabled=True).all()
+            users = User.query.filter_by(enabled=True).all() # TODO - this has to get all users for later dashboard list
+            categories = Category.query.order_by(Category.name).all()
             data = userManage.get_user_data(users)
-            return render_template("admin.html", data=data)
+            return render_template("admin.html", data=data, categories=categories)
 
         elif "username" in session:
             # Redirect standard users + analysts to dashboard
@@ -330,9 +331,35 @@ def configuration_page():
             return redirect(url_for("login_page"))
 
 
+# New Category Page
+@app.route("/c/new",  methods=["POST", "GET"])
+def category_new():
+    if request.method == "POST" and session['authLevel'] > 1:
+        if request.form['cat_name'].strip() != '':
+            categoryManage.add(request.form['cat_name'], request.form['description'], request.form.get('activeCheck'))
+            flash("New category has been created")
+            return redirect(url_for("configuration_page"))
+
+    else:
+        if "username" in session and session["authLevel"] > 1:
+            # Render new category page
+            return render_template("category_new.html")
+
+        elif "username" in session:
+            # Redirect standard users + analysts to dashboard
+            flash("You lack permission to perform this function")
+            return redirect(url_for("user_dashboard"))
+
+        else:
+            # No user logged-in - redirect to login
+            flash("Please login to continue", "info")
+            return redirect(url_for("login_page"))
+
+
+
 # Category Edit Pages
 @app.route("/c/<catId>", methods=["POST", "GET"])
-def category_page(catId):
+def category_edit(catId):
     category = Category.query.filter_by(id=catId).first()
 
     if request.method == "POST" and session['authLevel'] > 1:
@@ -354,13 +381,13 @@ def category_page(catId):
 
         else:
             # Category name is blank, render template again
-            return render_template("category.html", category=category)           
+            return render_template("category_edit.html", category=category)
 
     else:
         if "username" in session and session["authLevel"] > 1:
             if category != None:
                 # Render category config page
-                return render_template("category.html", category=category)
+                return render_template("category_edit.html", category=category)
 
             else:
                 # Invalid category id

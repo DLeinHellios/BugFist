@@ -21,6 +21,7 @@ from app.actions import *
 userSession = UserSession()
 userManage = UserManage()
 ticketManage = TicketManage()
+categoryManage = CategoryManage()
 
 # Import views
 from app.views import *

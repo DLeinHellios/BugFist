@@ -14,6 +14,8 @@ class User(db.Model):
     enabled = db.Column(db.Boolean)
     submissions = db.relationship("Ticket", foreign_keys="Ticket.raise_user_id", back_populates="raise_user")
     resolutions = db.relationship("Ticket", foreign_keys="Ticket.resolve_user_id", back_populates="resolve_user")
+    register_date = db.Column(db.DateTime)
+    last_login = db.Column(db.DateTime)
 
 
     def __init__(self, username, email, hash, access):
@@ -22,6 +24,7 @@ class User(db.Model):
         self.hash = hash
         self.access = access
         self.enabled = True
+        self.register_date = datetime.today()
 
 
     def __repr__(self):
@@ -34,12 +37,14 @@ class Category(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
+    description = db.Column(db.String)
     active = db.Column(db.Boolean)
 
 
-    def __init__(self, name):
+    def __init__(self, name, description, isActive):
         self.name = name
-        self.active = True
+        self.description = description
+        self.active = isActive
 
 
     def __repr__(self):
@@ -66,6 +71,7 @@ class Ticket(db.Model):
     raise_user = db.relationship("User", foreign_keys=raise_user_id, back_populates="submissions")
     resolve_user = db.relationship("User", foreign_keys=resolve_user_id, back_populates="resolutions")
     notes = db.relationship("Note")
+
 
     def __init__(self, title, body, category_id, priority, raise_user_id):
         self.title = title

@@ -127,6 +127,21 @@ html {
   margin: 10px 0;
 }
 
+.config-container {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  width: 100%;
+  height: 200px;
+  min-height: 200px;
+  max-height: 600px;
+  resize: vertical;
+  overflow-x: auto;
+  overflow-y: auto;
+  border: 1px solid #343A40;
+  margin: 10px 0;
+}
+
 .search-container {
   width: 100%;
   overflow-x: auto;
@@ -144,7 +159,7 @@ html {
 .ticket-table td a {
   display: block;
   color: black;
-  padding: 8px;
+  padding: 6px 8px;
 }
 
 .ticket-table td a:hover {
@@ -177,9 +192,11 @@ html {
   width: 100%;
   margin: auto;
   text-align: center;
+
 }
 
 .chart-container {
+  margin:auto;
   width: 70%;
   padding: 0 10px;
   display: inline-block;
@@ -201,6 +218,10 @@ html {
   }
 
   .ticket-container {
+    overflow-x: hidden;
+  }
+
+  .config-container {
     overflow-x: hidden;
   }
 

@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}BugFist | Admin Configuration{% endblock %}
+{% block title %}BugFist | Configuration{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
@@ -111,13 +111,65 @@
         }
       });
     </script>
-<!---
-    <h3>Manage Users</h3>
-    <hr>
-    <h3>Manage Categories</h3>
-    <hr>
-    <h3>System Settings</h3>
+
+    <div class="row justify-content-center">
+<!--
+      <div class="col-lg px-4">
+        <h3>Users</h3>
+        <div class="config-container">
+          <table class="ticket-table">
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Role</th>
+            </tr>
+
+            <tr>
+              <td><a href="#">1</a></td>
+              <td><a href="#">Sample</a></td>
+              <td><a href="#">User</a></td>
+            </tr>
+
+          </table>
+        </div>
+      </div>
 -->
+
+      <div class="col-lg px-4">
+        <h3>Categories</h3>
+        <div class="config-container">
+          <table class="ticket-table">
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Enabled</th>
+            </tr>
+
+            {% for category in categories %}
+              <tr>
+                <td><a href="{{ url_for('category_edit', catId=category['id']) }}">{{ category['id'] }}</a></td>
+                <td><a href="{{ url_for('category_edit', catId=category['id']) }}">{{ category['name'] }}</a></td>
+
+                {% if category['active'] == True %}
+                  <td><a href="{{ url_for('category_edit', catId=category['id']) }}"><span style="color:#8DA25C">Yes</span></a></td>
+                {% else %}
+                  <td><a href="{{ url_for('category_edit', catId=category['id']) }}"><span style="color:#C02E1D">No</span></a></td>
+                {% endif %}
+              </tr>
+            {% endfor %}
+          </table>
+
+        </div>
+
+        <div class="dashboard-nav">
+          <a href="/c/new" class="btn btn-dark" role="button">Add Category</a>
+        </div>
+
+      </div>
+    </div>
+
+    <hr>
+
   </div>
 </div>
 {% endblock %}

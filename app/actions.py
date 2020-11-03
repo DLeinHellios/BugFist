@@ -130,9 +130,9 @@ class TicketManage:
     def validate_new_ticket(self, title, body, category):
         '''Returns message to flash if ticket submission is invalid, otherwise returns blank string'''
         msg = ''
-        if title.rstrip() == '':
+        if title.strip() == '':
             msg = 'Tickets must include a title'
-        elif body.rstrip() == '':
+        elif body.strip() == '':
             msg = 'Tickets must include a description'
         elif len(title) > self.max_title_length:
             msg = 'Title exceeds maximum length'
@@ -151,7 +151,7 @@ class TicketManage:
         if priority == '0':
             priority = None
 
-        newTicket = Ticket(title.rstrip(), body.rstrip(), category, priority, session['userId'])
+        newTicket = Ticket(title.strip(), body.strip(), category, priority, session['userId'])
         db.session.add(newTicket)
         db.session.commit()
 
@@ -159,7 +159,7 @@ class TicketManage:
     def validate_ticket_addition(self, addition):
         '''Returns a message to flash if resolution or note is invalid, otherwise returns blank string'''
         msg = ''
-        if addition.rstrip() == "":
+        if addition.strip() == "":
             msg = 'Please enter a resolution'
         elif len(addition) > self.max_addition_length:
             msg = 'Resolution exceeds maximum length'
@@ -170,7 +170,7 @@ class TicketManage:
     def resolve_ticket(self, id, resolution):
         '''Adds resolution data to an existing ticket'''
         ticket = Ticket.query.filter_by(id=id).first()
-        ticket.resolution = resolution.rstrip()
+        ticket.resolution = resolution.strip()
         ticket.resolve_user_id = session['userId']
         ticket.resolve_date = datetime.today()
         ticket.open = False
@@ -179,7 +179,7 @@ class TicketManage:
 
     def add_note(self, ticketId, note):
         '''Create a new ticket note in database'''
-        newNote = Note(note.rstrip(), session['userId'], ticketId)
+        newNote = Note(note.strip(), session['userId'], ticketId)
         db.session.add(newNote)
         db.session.commit()
 
@@ -222,8 +222,6 @@ class TicketManage:
             else:
                 data['ticket_status']['closed'] += 1
 
-
-
         data['top_categories'] = sorted(category_counts.items(), key=lambda x:x[1], reverse=True)
 
         # Pad for bar chart
@@ -231,3 +229,16 @@ class TicketManage:
             data['top_categories'] += [('',0)]
 
         return data
+
+
+class CategoryManage:
+    def add(self, name, description, active):
+        '''Adds a new category'''
+        # Convert "on" string from form
+        isActive = False
+        if active:
+            isActive = True
+
+        newCat = Category(name, description, isActive)
+        db.session.add(newCat)
+        db.session.commit()

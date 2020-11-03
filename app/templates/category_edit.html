@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+
+{% block title %}Category:{{ category['id'] }} | Edit{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6 px-4 content-edit">
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="alert alert-secondary" role="alert">
+            {{msg}}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="settings-header">
+      <h3>Editing Category:{{ category['id'] }}</h3>
+    </div>
+
+    <form method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+      <div class="form-group row">
+        <label for="cat_name" class="col-lg-2 col-form-label">Name</label>
+        <div class="col-lg-10">
+          <input type="text" class="form-control" name="cat_name" value="{{ category['name'] }}">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="description" class="col-lg-2 col-form-label">Description</label>
+        <div class="col-lg-10">
+          {% if category['description'] != None %}
+            <textarea name="description" class="form-control" rows=3>{{ category['description'] }}</textarea>
+          {% else %}
+            <textarea name="description" class="form-control" rows=3></textarea>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-lg-2">Status</div>
+        <div class="col-lg-10">
+          <div class="form-check">
+          {% if category['active'] == True %}
+            <input class="form-check-input" type="checkbox" name="activeCheck" checked>
+          {% else %}
+            <input class="form-check-input" type="checkbox" name="activeCheck">
+          {% endif %}
+          <label class="form-check-label" for="activeCheck">Enabled</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="edit-nav">
+        <button type="submit" value="submit" class="btn btn-dark">Submit</button>
+        <a href="/admin" class="btn btn-dark" role="button">Cancel</a>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}
