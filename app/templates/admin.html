@@ -113,36 +113,52 @@
     </script>
 
     <div class="row justify-content-center">
-<!--
       <div class="col-lg px-4">
         <h3>Users</h3>
         <div class="config-container">
           <table class="ticket-table">
             <tr>
-              <th>ID</th>
-              <th>Username</th>
-              <th>Role</th>
+              <th width=10%>ID</th>
+              <th width=45%>Username</th>
+              <th width=25%>Role</th>
+              <th width=20%>Enabled</th>
             </tr>
 
-            <tr>
-              <td><a href="#">1</a></td>
-              <td><a href="#">Sample</a></td>
-              <td><a href="#">User</a></td>
-            </tr>
+            {% for user in users %}
+              <tr>
+                <td><a href="#">{{ user.id }}</a></td>
+                <td><a href="#">{{ user.username }}</a></td>
+
+                {% if user.access == 0 %}
+                  <td><a href="#">User</a></td>
+                {% elif user.access == 1 %}
+                  <td><a href="#"><span style="color:#117899">Analyst</span></a></td>
+                {% elif user.access == 2 %}
+                  <td><a href="#"><span style="color:#A45FBE">Admin</span></a></td>
+                {% endif %}
+
+                {% if user.enabled == True %}
+                  <td><a href="#"><span style="color:#8DA25C">Yes</span></a></td>
+                {% else %}
+                  <td><a href="#"><span style="color:#C02E1D">No</span></a></td>
+                {% endif %}
+
+              </tr>
+            {% endfor %}
 
           </table>
         </div>
       </div>
--->
+
 
       <div class="col-lg px-4">
         <h3>Categories</h3>
         <div class="config-container">
           <table class="ticket-table">
             <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Enabled</th>
+              <th width=10%>ID</th>
+              <th width=70%>Name</th>
+              <th width=20%>Active</th>
             </tr>
 
             {% for category in categories %}
@@ -162,7 +178,7 @@
         </div>
 
         <div class="dashboard-nav">
-          <a href="/c/new" class="btn btn-dark" role="button">Add Category</a>
+          <a href="/add-category" class="btn btn-dark" role="button">Add Category</a>
         </div>
 
       </div>

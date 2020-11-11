@@ -312,27 +312,26 @@ def note_page(ticketId):
 # Admin dashboard
 @app.route("/admin")
 def configuration_page():
+    if "username" in session and session["authLevel"] > 1:
+        # Render admin config page
+        users = User.query.order_by(User.enabled.desc(), User.access.desc(), User.username).all()
+        categories = Category.query.order_by(Category.active.desc(), Category.name).all()
+        data = userManage.get_user_data(users)
+        return render_template("admin.html", data=data, users=users, categories=categories)
 
-        if "username" in session and session["authLevel"] > 1:
-            # Render admin config page
-            users = User.query.filter_by(enabled=True).all() # TODO - this has to get all users for later dashboard list
-            categories = Category.query.order_by(Category.name).all()
-            data = userManage.get_user_data(users)
-            return render_template("admin.html", data=data, categories=categories)
+    elif "username" in session:
+        # Redirect standard users + analysts to dashboard
+        flash("You lack permission to perform this function")
+        return redirect(url_for("user_dashboard"))
 
-        elif "username" in session:
-            # Redirect standard users + analysts to dashboard
-            flash("You lack permission to perform this function")
-            return redirect(url_for("user_dashboard"))
-
-        else:
-            # No user logged-in - redirect to login
-            flash("Please login to continue", "info")
-            return redirect(url_for("login_page"))
+    else:
+        # No user logged-in - redirect to login
+        flash("Please login to continue", "info")
+        return redirect(url_for("login_page"))
 
 
 # New Category Page
-@app.route("/c/new",  methods=["POST", "GET"])
+@app.route("/add-category",  methods=["POST", "GET"])
 def category_new():
     if request.method == "POST" and session['authLevel'] > 1:
         if request.form['cat_name'].strip() != '':
