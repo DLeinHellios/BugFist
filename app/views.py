@@ -218,8 +218,17 @@ def view_closed_tickets():
 # Ticket Pages
 @app.route("/t/<ticketId>")
 def ticket_page(ticketId):
-    if "username" in session:
+
+    # Setup
+    try:
+        # Query ticket
         ticket = Ticket.query.filter_by(id=ticketId).first()
+    except:
+        # URL is malformed, unable to query ticket
+        return redirect(url_for("user_dashboard"))
+
+    # Routing
+    if "username" in session:
         if ticket != None:
             if session['username'] == ticket.raise_user.username or session['authLevel'] > 0:
                 # Display ticket page
@@ -243,8 +252,16 @@ def ticket_page(ticketId):
 # Resolution pages
 @app.route("/r/<ticketId>", methods=["POST", "GET"])
 def resolve_page(ticketId):
-    ticket = Ticket.query.filter_by(id=ticketId).first()
 
+    # Setup
+    try:
+        # Query ticket
+        ticket = Ticket.query.filter_by(id=ticketId).first()
+    except:
+        # URL is malformed, unable to query ticket
+        return redirect(url_for("user_dashboard"))
+
+    # Routing
     if request.method == "POST" and session['authLevel'] > 0:
         validate = ticketManage.validate_ticket_addition(request.form["resolution"])
 
@@ -278,8 +295,16 @@ def resolve_page(ticketId):
 # Notes Pages
 @app.route("/n/<ticketId>", methods=["POST", "GET"])
 def note_page(ticketId):
-    ticket = Ticket.query.filter_by(id=ticketId).first()
 
+    # Setup
+    try:
+        # Query ticket
+        ticket = Ticket.query.filter_by(id=ticketId).first()
+    except:
+        # URL is malformed, unable to query ticket
+        return redirect(url_for("user_dashboard"))
+
+    # Routing
     if request.method == "POST" and session['authLevel'] > 0:
         validate = ticketManage.validate_ticket_addition(request.form["note"])
         if validate == '':
@@ -359,8 +384,16 @@ def category_new():
 # Category Edit Pages
 @app.route("/c/<catId>", methods=["POST", "GET"])
 def category_edit(catId):
-    category = Category.query.filter_by(id=catId).first()
 
+    # Setup
+    try:
+        # Query category
+        category = Category.query.filter_by(id=catId).first()
+    except:
+        # URL is malformed, unable to query category
+            return redirect(url_for("configuration_page"))
+
+    # Routing
     if request.method == "POST" and session['authLevel'] > 1:
         if request.form["cat_name"].strip() != '':
             # Name is not blank, commit edit in db
@@ -413,7 +446,7 @@ def user_edit(userId):
         # Query user
         user = User.query.filter_by(id=userId).first()
     except:
-        # Unable to query user
+        # URL is malformed, unable to query user
             return redirect(url_for("configuration_page"))
 
     # Routing
