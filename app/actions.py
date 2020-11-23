@@ -12,6 +12,11 @@ class UserSession:
         session["authLevel"] = userData.access
         session["lastPage"] = "/dashboard"
 
+        # Update Last Login
+        user = User.query.filter_by(id=userData.id).first()
+        user.last_login = datetime.today()
+        db.session.commit()
+
 
     def auth(self, name, passwd):
         '''Accepts user credentials, authenticates credentials, and creates builds session values'''
@@ -29,6 +34,8 @@ class UserSession:
             del session["userId"]
             del session["username"]
             del session["authLevel"]
+            del session["lastPage"]
+
 
 
 class UserManage:
@@ -117,6 +124,27 @@ class UserManage:
             data['submit_counts'] += [('',0)]
 
         return data
+
+
+    def edit_permissions(self, id, access, enabled):
+        user = User.query.filter_by(id=id).first()
+
+        # Validate access
+        if access == "0":
+            user.access = 0
+        elif access == "1":
+            user.access = 1
+        elif access == "2":
+            user.access = 2
+        else:
+            user.access = 0
+
+        # Convert "on" string from form
+        user.enabled = False
+        if enabled:
+            user.enabled = True
+
+        db.session.commit()
 
 
 
@@ -229,6 +257,7 @@ class TicketManage:
             data['top_categories'] += [('',0)]
 
         return data
+
 
 
 class CategoryManage:

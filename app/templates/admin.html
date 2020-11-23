@@ -126,21 +126,21 @@
 
             {% for user in users %}
               <tr>
-                <td><a href="#">{{ user.id }}</a></td>
-                <td><a href="#">{{ user.username }}</a></td>
+                <td><a href="{{ url_for('user_edit', userId=user['id']) }}">{{ user.id }}</a></td>
+                <td><a href="{{ url_for('user_edit', userId=user['id']) }}">{{ user.username }}</a></td>
 
                 {% if user.access == 0 %}
-                  <td><a href="#">User</a></td>
+                  <td><a href="{{ url_for('user_edit', userId=user['id']) }}">User</a></td>
                 {% elif user.access == 1 %}
-                  <td><a href="#"><span style="color:#117899">Analyst</span></a></td>
+                  <td><a href="{{ url_for('user_edit', userId=user['id']) }}"><span style="color:#117899">Analyst</span></a></td>
                 {% elif user.access == 2 %}
-                  <td><a href="#"><span style="color:#A45FBE">Admin</span></a></td>
+                  <td><a href="{{ url_for('user_edit', userId=user['id']) }}"><span style="color:#A45FBE">Admin</span></a></td>
                 {% endif %}
 
                 {% if user.enabled == True %}
-                  <td><a href="#"><span style="color:#8DA25C">Yes</span></a></td>
+                  <td><a href="{{ url_for('user_edit', userId=user['id']) }}"><span style="color:#8DA25C">Yes</span></a></td>
                 {% else %}
-                  <td><a href="#"><span style="color:#C02E1D">No</span></a></td>
+                  <td><a href="{{ url_for('user_edit', userId=user['id']) }}"><span style="color:#C02E1D">No</span></a></td>
                 {% endif %}
 
               </tr>

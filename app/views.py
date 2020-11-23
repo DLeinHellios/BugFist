@@ -393,6 +393,52 @@ def category_edit(catId):
                 flash("Category not found")
                 return redirect(url_for("configuration_page"))
 
+        elif "username" in session:
+            # Redirect standard users + analysts to dashboard
+            flash("You lack permission to perform this function")
+            return redirect(url_for("user_dashboard"))
+
+        else:
+            # No user logged-in - redirect to login
+            flash("Please login to continue", "info")
+            return redirect(url_for("login_page"))
+
+
+# User Edit Pages
+@app.route("/u/<userId>", methods=["POST", "GET"])
+def user_edit(userId):
+
+    # Setup
+    try:
+        # Query user
+        user = User.query.filter_by(id=userId).first()
+    except:
+        # Unable to query user
+            return redirect(url_for("configuration_page"))
+
+    # Routing
+    if request.method == "POST" and session['authLevel'] > 1:
+        if session["userId"] == int(userId):
+            flash("Editing your own account is not permitted", "info")
+            return redirect(url_for("user_edit", userId=userId))
+
+        else:
+            # Update user permissions
+
+            userManage.edit_permissions(user.id, request.form.get("user_role"), request.form.get("user_enable"))
+            flash("User '" + user.username + "' has been edited successfully")
+            return redirect(url_for("configuration_page"))
+
+    else:
+        if "username" in session and session["authLevel"] > 1:
+            if user != None:
+                # Render user config page
+                return render_template("user_edit.html", user=user)
+
+            else:
+                # Invalid user id
+                flash("User not found")
+                return redirect(url_for("configuration_page"))
 
         elif "username" in session:
             # Redirect standard users + analysts to dashboard

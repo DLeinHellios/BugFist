@@ -1,0 +1,100 @@
+{% extends "layout.html" %}
+
+{% block title %}Editing User: {{ user['username'] }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8 px-4 content-edit">
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="alert alert-secondary" role="alert">
+            {{msg}}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="settings-header">
+      <h3>Editing User: {{ user['username'] }}</h3>
+    </div>
+
+    <form method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+      <div class="form-group row">
+        <label for="user_name" class="col-md-2 col-form-label">Username</label>
+        <div class="col-md-10">
+          <input type="text" class="form-control" name="user_name" readonly value="{{ user['username'] }}">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="user_email" class="col-md-2 col-form-label">Email</label>
+        <div class="col-md-10">
+          <input type="text" class="form-control" name="user_email" readonly value="{{ user['email'] }}">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="user_register" class="col-md-2 col-form-label">Registered</label>
+        <div class="col-md-10">
+          <input type="text" class="form-control" name="user_register" readonly value="{{ user['register_date'].strftime('%m/%d/%Y') }}">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="user_logged" class="col-md-2 col-form-label">Last Login</label>
+        <div class="col-md-10">
+          <input type="text" class="form-control" name="user_logged" readonly value="{{ user['last_login'].strftime('%m/%d/%Y') }}">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="user_role" class="col-md-2 col-form-label">Role</label>
+        <div class="col-md-10">
+          <select class="form-control" name="user_role">
+
+            <option style="display:none" selected value="{{ user['access'] }}">
+              {% if user['access'] > 1 %}
+                Admin
+              {% elif user['access'] > 0 %}
+                Analyst
+              {% else %}
+                User
+              {% endif %}
+            </option>
+
+            <option value="0">User</option>
+            <option value="1">Analyst</option>
+            <option value="2">Admin</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-md-2">Status</div>
+        <div class="col-md-10">
+          <div class="form-check">
+          {% if user["enabled"] == True %}
+            <input class="form-check-input" type="checkbox" name="user_enable" checked>
+          {% else %}
+            <input class="form-check-input" type="checkbox" name="user_enable">
+          {% endif %}
+          <label class="form-check-label" for="user_enable">Enabled</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="edit-nav">
+        {% if session['userId'] != user['id'] %}
+          <button type="submit" value="submit" class="btn btn-dark">Submit</button>
+        {% endif %}
+        <a href="/admin" class="btn btn-dark" role="button">Cancel</a>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}
