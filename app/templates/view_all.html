@@ -13,6 +13,7 @@
           <th>ID</th>
           <th>Title</th>
           <th>Category</th>
+          <th>Raise User</th>
           <th>Raise Date</th>
           <th>Priority</th>
           <th>Status</th>
@@ -33,6 +34,7 @@
                 <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.category['name'] }}</a></td>
               {% endif %}
 
+              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.raise_user.username }}</a></td>
               <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.raise_date.strftime('%m/%d/%Y') }}</a></td>
 
               {% if ticket['priority'] == 3 %}
