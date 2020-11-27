@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+{% block title %}BugFist | All Tickets{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-xl-10 px-5 content-body">
+    <a href="/admin"><span style="font-size:.9rem"> <- Return to Configuration</span></a>
+    <h3>All Users</h3>
+    <div class="search-container">
+      <table class="ticket-table">
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Registered</th>
+          <th>Last Login</th>
+          <th>Role</th>
+          <th>Enabled</th>
+        </tr>
+
+      {% if users == [] %}
+        </table>
+          <p style="text-align:center; padding:50px 0; color:#888; font-size: 1.4rem;">No data to display</p>
+        {% else %}
+          {% for user in users %}
+            <tr>
+              <td><a href="{{ url_for('user_edit', userId=user['id']) }}">{{ user.id }}</a></td>
+              <td><a href="{{ url_for('user_edit', userId=user['id']) }}">{{ user.username }}</a></td>
+              <td><a href="{{ url_for('user_edit', userId=user['id']) }}">{{ user.email }}</a></td>
+              <td><a href="{{ url_for('user_edit', userId=user['id']) }}">{{ user.register_date.strftime('%m/%d/%Y') }}</a></td>
+              <td><a href="{{ url_for('user_edit', userId=user['id']) }}">{{ user.last_login.strftime('%m/%d/%Y') }}</a></td>
+
+              {% if user.access == 0 %}
+                <td><a href="{{ url_for('user_edit', userId=user['id']) }}">User</a></td>
+              {% elif user.access == 1 %}
+                <td><a href="{{ url_for('user_edit', userId=user['id']) }}"><span style="color:#117899">Analyst</span></a></td>
+              {% elif user.access == 2 %}
+                <td><a href="{{ url_for('user_edit', userId=user['id']) }}"><span style="color:#A45FBE">Admin</span></a></td>
+              {% endif %}
+
+              {% if user.enabled == True %}
+                <td><a href="{{ url_for('user_edit', userId=user['id']) }}"><span style="color:#8DA25C">Yes</span></a></td>
+              {% else %}
+                <td><a href="{{ url_for('user_edit', userId=user['id']) }}"><span style="color:#C02E1D">No</span></a></td>
+              {% endif %}
+
+            </tr>
+          {% endfor %}
+          </table>
+      {% endif %}
+    </div>
+    <div class="dashboard-nav">
+      <a href="/admin" class="btn btn-dark" role="button">Return to Configuration</a>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}

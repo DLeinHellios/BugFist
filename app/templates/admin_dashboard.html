@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="row justify-content-center">
-  <div class="col-xl-8 px-5 content-body">
+  <div class="col-xl-10 px-5 content-body">
 
     {% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -113,7 +113,7 @@
     </script>
 
     <div class="row justify-content-center">
-      <div class="col-lg px-4">
+      <div class="col-lg px-4 py-2">
         <h3>Users</h3>
         <div class="config-container">
           <table class="ticket-table">
@@ -148,10 +148,13 @@
 
           </table>
         </div>
+
+      <div class="col-lg-4 px-0">
+        <a href="/admin/users" class="btn btn-dark btn-block" role="button">View All Users</a>
       </div>
+    </div>
 
-
-      <div class="col-lg px-4">
+      <div class="col-lg px-4 py-2">
         <h3>Categories</h3>
         <div class="config-container">
           <table class="ticket-table">
@@ -177,15 +180,22 @@
 
         </div>
 
-        <div class="dashboard-nav">
-          <a href="/add-category" class="btn btn-dark" role="button">Add Category</a>
+        <div class="col-lg-4 px-0">
+          <a href="/add-category" class="btn btn-dark btn-block" role="button">Add Category</a>
         </div>
 
       </div>
     </div>
 
-    <hr>
 
+    <hr>
+<!---
+    <div class="col mx-auto settings-button">
+      <div class="row justify-content-center">
+        <a href="/settings" class="settings-button">System Settings -></a>
+      </div>
+    </div>
+--->
   </div>
 </div>
 {% endblock %}

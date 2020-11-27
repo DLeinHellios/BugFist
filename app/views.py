@@ -342,7 +342,7 @@ def configuration_page():
         users = User.query.order_by(User.enabled.desc(), User.access.desc(), User.username).all()
         categories = Category.query.order_by(Category.active.desc(), Category.name).all()
         data = userManage.get_user_data(users)
-        return render_template("admin.html", data=data, users=users, categories=categories)
+        return render_template("admin_dashboard.html", data=data, users=users, categories=categories)
 
     elif "username" in session:
         # Redirect standard users + analysts to dashboard
@@ -457,7 +457,6 @@ def user_edit(userId):
 
         else:
             # Update user permissions
-
             userManage.edit_permissions(user.id, request.form.get("user_role"), request.form.get("user_enable"))
             flash("User '" + user.username + "' has been edited successfully")
             return redirect(url_for("configuration_page"))
@@ -482,6 +481,42 @@ def user_edit(userId):
             # No user logged-in - redirect to login
             flash("Please login to continue", "info")
             return redirect(url_for("login_page"))
+
+
+# View All Users
+@app.route("/admin/users")
+def view_all_users():
+    if "username" in session and session["authLevel"] > 1:
+        users = User.query.order_by(User.enabled.desc(), User.access.desc(), User.username).all()
+        # Render all users page
+        return render_template("view_users.html", users=users)
+
+    elif "username" in session:
+        # Redirect standard users + analysts to dashboard
+        flash("You lack permission to perform this function")
+        return redirect(url_for("user_dashboard"))
+
+    else:
+        # No user logged-in - redirect to login
+        flash("Please login to continue", "info")
+        return redirect(url_for("login_page"))
+
+# System Settings
+@app.route("/settings")
+def system_settings():
+    if "username" in session and session["authLevel"] > 1:
+        # Render admin settings page
+        return render_template("admin_settings.html")
+
+    elif "username" in session:
+        # Redirect standard users + analysts to dashboard
+        flash("You lack permission to perform this function")
+        return redirect(url_for("user_dashboard"))
+
+    else:
+        # No user logged-in - redirect to login
+        flash("Please login to continue", "info")
+        return redirect(url_for("login_page"))
 
 
 #----- Errors -----

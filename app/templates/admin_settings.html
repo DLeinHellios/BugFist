@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}BugFist | System Settings{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8 px-4 content-edit">
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="alert alert-secondary" role="alert">
+            {{msg}}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+
+  </div>
+</div>
+{% endblock %}
