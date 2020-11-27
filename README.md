@@ -1,8 +1,8 @@
 # BugFist - Bug Tracking in the Cloud
 
-BugFist is a cloud-based ticketing platform written in Python and Flask. This project was built for practice, and it not suited for serious production environments.
-## Planned Features
+BugFist is a cloud-based ticketing platform written in Python and Flask, with a responsive Bootstrap UI. It is easily deployed (freely) on Heroku with PostgreSQL. This project is built for practice, and is not intended for serious production environments. BugFist is still in development, and some features may change.
 
+## Planned Features
 
 - **Individual User Accounts**
 	- Three account roles
@@ -13,24 +13,24 @@ BugFist is a cloud-based ticketing platform written in Python and Flask. This pr
 		- Admin-set registration policies
 		- Google reCAPTCHA support
 	- Secure Password storage with bcrypt
-- ** Ticket submission and processing**
+- **Ticket Submission and Workflow**
 	- Simple, concise submission form
 	- Supports categories and priority assignment
 	- Attach notes to tickets
 	- Close tickets with resolution text
-- **Dynamic user dashboard**
+- **Dynamic User Dashboard**
 	- Individualized dashboards for each role
 	- Accessible dashboard for standard users
 	- Responsive charts with Chart.js
-- **Admin configuration pages**
+- **Admin Configuration Pages**
 	- User role management
 	- User metric charts
 	- Category management
-- **Database management**
+- **Database Management**
 	- Hosted with Heroku PostgreSQL
 	- Built with SQLAlchemy ORM
 	- Easy migrations with Alembic
-- **Responsive, mobile-first UI with Bootstrap**
+- **Responsive, Mobile-First UI with Bootstrap**
 
 <hr></hr>
 

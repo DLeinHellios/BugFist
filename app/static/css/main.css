@@ -211,7 +211,7 @@ html {
 }
 
 .settings-button a {
-  color: #666;
+  color: #898989;
   font: inherit;
   font-size: 1.2rem;
   text-align: center;
@@ -248,8 +248,9 @@ html {
 @media only screen and (min-width: 1024px) {
   .chart-container {
     width: 30%;
-    padding: 0;
+    padding: 0 20px;
   }
+
 
   .dashboard-greeting {
     padding: 0 24px;
