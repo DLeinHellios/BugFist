@@ -38,7 +38,7 @@ class UserSession:
 
 
 
-class UserManage:
+class UserManager:
     def __init__(self):
         '''Sets default password settings'''
         self.min_pw_length = 8
@@ -91,6 +91,7 @@ class UserManage:
             accessLevel = 2
         else:
             accessLevel = 0
+
 
         # Register new user
         newUser = User(username, email, bcrypt.generate_password_hash(passwd).decode('utf8'), accessLevel)
@@ -148,7 +149,7 @@ class UserManage:
 
 
 
-class TicketManage:
+class TicketManager:
     def __init__(self):
         self.max_title_length = 75
         self.max_body_length = 1000
@@ -260,7 +261,7 @@ class TicketManage:
 
 
 
-class CategoryManage:
+class CategoryManager:
     def add(self, name, description, active):
         '''Adds a new category'''
         # Convert "on" string from form
@@ -271,3 +272,8 @@ class CategoryManage:
         newCat = Category(name, description, isActive)
         db.session.add(newCat)
         db.session.commit()
+
+
+
+class SettingsManager:
+    pass

@@ -114,7 +114,7 @@
 
     <div class="row justify-content-center">
       <div class="col-lg px-4 py-2">
-        <h3>Users</h3>
+        <h3>Users - {{ counts[0] }}</h3>
         <div class="config-container">
           <table class="ticket-table">
             <tr>
@@ -155,7 +155,7 @@
     </div>
 
       <div class="col-lg px-4 py-2">
-        <h3>Categories</h3>
+        <h3>Categories - {{ counts[1] }}</h3>
         <div class="config-container">
           <table class="ticket-table">
             <tr>
@@ -189,13 +189,11 @@
 
 
     <hr>
-<!---
-    <div class="col mx-auto settings-button">
-      <div class="row justify-content-center">
-        <a href="/settings" class="settings-button">System Settings -></a>
-      </div>
+
+    <div class="row justify-content-center settings-nav">
+      <a href="/settings">[ System Settings ]</a>
     </div>
---->
+
   </div>
 </div>
 {% endblock %}

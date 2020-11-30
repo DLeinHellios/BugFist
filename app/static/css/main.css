@@ -210,15 +210,14 @@ html {
   padding: 0 16px;
 }
 
-.settings-button a {
+.settings-nav a {
   color: #898989;
   font: inherit;
-  font-size: 1.2rem;
-  text-align: center;
 }
 
-.settings-button a:hover {
+.settings-nav a:hover {
   color: #343A40;
+  text-decoration: none;
 }
 
 /* Media Queries */

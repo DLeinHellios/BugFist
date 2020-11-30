@@ -342,7 +342,8 @@ def configuration_page():
         users = User.query.order_by(User.enabled.desc(), User.access.desc(), User.username).all()
         categories = Category.query.order_by(Category.active.desc(), Category.name).all()
         data = userManage.get_user_data(users)
-        return render_template("admin_dashboard.html", data=data, users=users, categories=categories)
+        counts = (len(users), len(categories))
+        return render_template("admin_dashboard.html", data=data, users=users, categories=categories, counts=counts)
 
     elif "username" in session:
         # Redirect standard users + analysts to dashboard
@@ -378,7 +379,6 @@ def category_new():
             # No user logged-in - redirect to login
             flash("Please login to continue", "info")
             return redirect(url_for("login_page"))
-
 
 
 # Category Edit Pages
@@ -500,6 +500,7 @@ def view_all_users():
         # No user logged-in - redirect to login
         flash("Please login to continue", "info")
         return redirect(url_for("login_page"))
+
 
 # System Settings
 @app.route("/settings")

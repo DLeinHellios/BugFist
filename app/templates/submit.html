@@ -20,7 +20,7 @@
     <form method="POST">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       <div class="form-group">
-        <input type="text" class="form-control" name="title" placeholder="Title" value="{{ prefill[0] }}">
+        <input type="text" class="form-control" name="title" placeholder="A Short Title" value="{{ prefill[0] }}">
       </div>
       <div class="form-group">
         <textarea class="form-control" name="body" rows=3 placeholder="Please write a detailed description of the issue...">{{ prefill[1] }}</textarea>

@@ -19,9 +19,9 @@ from app.actions import *
 
 # Init objects
 userSession = UserSession()
-userManage = UserManage()
-ticketManage = TicketManage()
-categoryManage = CategoryManage()
+userManage = UserManager()
+ticketManage = TicketManager()
+categoryManage = CategoryManager()
 
 # Import views
 from app.views import *
