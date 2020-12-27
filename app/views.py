@@ -27,7 +27,7 @@ def login_page():
             if userSession.auth(request.form["loginUser"], request.form["loginPass"]):
                 return redirect(url_for("user_dashboard"))
             else:
-                flash("Invalid credentials", "warning")
+                flash("Incorrect login information", "warning")
                 return render_template("login.html")
         else:
             # Display login page
@@ -58,7 +58,6 @@ def register_user():
             flash("Please complete the CAPTCHA to continue")
             return render_template("register.html", prefill=[request.form["rUser"], request.form["rEmail"]])
 
-
         # Validate new user data
         if validate != '':
             flash(validate)
@@ -82,7 +81,7 @@ def register_user():
 @app.route('/submit', methods=["POST", "GET"])
 def submit_page():
     if request.method == "POST" and "username" in session:
-        validate = ticketManage.validate_new_ticket(request.form["title"], request.form["body"], request.form.get("category"))
+        validate = ticketManage.validate_ticket(request.form["title"], request.form["body"])
         if validate != '':
             # If ticket data is invalid, redirect back to submit
             flash(validate)
@@ -215,9 +214,9 @@ def view_closed_tickets():
         return redirect(url_for("login_page"))
 
 
-# Ticket Pages
+# Ticket Display Pages
 @app.route("/t/<ticketId>")
-def ticket_page(ticketId):
+def ticket_display_page(ticketId):
 
     # Setup
     try:
@@ -232,7 +231,7 @@ def ticket_page(ticketId):
         if ticket != None:
             if session['username'] == ticket.raise_user.username or session['authLevel'] > 0:
                 # Display ticket page
-                return render_template("ticket.html", ticket=ticket, categories=Category.query.all())
+                return render_template("ticket_display.html", ticket=ticket, categories=Category.query.all())
             else:
                 # User is not raise user and lacks access level to view
                 flash("You lack permission to view this ticket")
@@ -249,9 +248,9 @@ def ticket_page(ticketId):
         return redirect(url_for("login_page"))
 
 
-# Resolution pages
+# Ticket Resolution pages
 @app.route("/r/<ticketId>", methods=["POST", "GET"])
-def resolve_page(ticketId):
+def ticket_resolve_page(ticketId):
 
     # Setup
     try:
@@ -269,17 +268,17 @@ def resolve_page(ticketId):
             # Submit resolution
             ticketManage.resolve_ticket(ticket.id, request.form["resolution"])
             flash("Ticket: {} has been resolved".format(ticket.id))
-            return redirect(url_for("ticket_page", ticketId = ticket.id))
+            return redirect(url_for("ticket_display_page", ticketId = ticket.id))
 
         else:
             # Resolution is invalid
             flash(validate)
-            return redirect(url_for("resolve_page", ticketId = ticket.id))
+            return redirect(url_for("ticket_resolve_page", ticketId = ticket.id))
 
     else:
         if "username" in session:
             if session['authLevel'] > 0 and ticket.open:
-                return render_template("resolve.html", ticket=ticket)
+                return render_template("ticket_resolve.html", ticket=ticket)
 
             else:
                 # User not permitted to resolve
@@ -292,9 +291,9 @@ def resolve_page(ticketId):
             return redirect(url_for("login_page"))
 
 
-# Notes Pages
+# Ticket Notes Pages
 @app.route("/n/<ticketId>", methods=["POST", "GET"])
-def note_page(ticketId):
+def ticket_note_page(ticketId):
 
     # Setup
     try:
@@ -311,17 +310,61 @@ def note_page(ticketId):
             # Submit note
             ticketManage.add_note(ticket.id, request.form["note"])
             flash("A note has been added to ticket: {}".format(ticket.id))
-            return redirect(url_for("ticket_page", ticketId = ticket.id))
+            return redirect(url_for("ticket_display_page", ticketId = ticket.id))
 
         else:
             # Note is invalid
             flash(validate)
-            return redirect(url_for("note_page", ticketId = ticket.id))
+            return redirect(url_for("ticket_note_page", ticketId = ticket.id))
 
     else:
         if "username" in session:
             if session['authLevel'] > 0 and ticket.open:
-                return render_template("note.html", ticket=ticket)
+                return render_template("ticket_note.html", ticket=ticket)
+
+            else:
+                # User not permitted to resolve
+                flash("You lack permission to perform this function")
+                return redirect(url_for("user_dashboard"))
+
+        else:
+            # No user logged-in, redirect to login page
+            flash("Please login to continue", "info")
+            return redirect(url_for("login_page"))
+
+
+# Ticket Edit Pages
+@app.route("/e/<ticketId>", methods=["POST", "GET"])
+def ticket_edit_page(ticketId):
+
+    # Setup
+    try:
+        # Query ticket + Categories
+        ticket = Ticket.query.filter_by(id=ticketId).first()
+        categories = Category.query.all()
+
+    except:
+        # URL is malformed, unable to query ticket
+        return redirect(url_for("user_dashboard"))
+
+    # Routing
+    if request.method == "POST" and session['authLevel'] > 1:
+        validate = ticketManage.validate_ticket(request.form["title"], request.form["body"])
+        if validate == '':
+            # Submit edited ticket
+            ticketManage.update_ticket(ticketId, request.form["title"], request.form["body"], request.form.get("category"), request.form.get("priority"))
+            flash("Successfully edited ticket: {}".format(ticket.id))
+            return redirect(url_for("ticket_display_page", ticketId = ticket.id))
+
+        else:
+            # Ticket edits not valid
+            flash(validate)
+            return redirect(url_for("ticket_edit_page", ticketId = ticket.id))
+
+    else:
+        if "username" in session:
+            if session['authLevel'] > 1 and ticket.open:
+                return render_template("ticket_edit.html", ticket=ticket, categories=categories)
 
             else:
                 # User not permitted to resolve

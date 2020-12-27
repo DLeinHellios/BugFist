@@ -88,8 +88,12 @@
 
     {% if ticket['open'] == True %}
       {% if session['authLevel'] > 0 %}
-        <a href="{{ url_for('resolve_page', ticketId=ticket['id']) }}" class="btn btn-dark" role="button">Resolve</a>
-        <a href="{{ url_for('note_page', ticketId=ticket['id']) }}" class="btn btn-dark" role="button">Add Note</a>
+        <a href="{{ url_for('ticket_resolve_page', ticketId=ticket['id']) }}" class="btn btn-dark" role="button">Resolve</a>
+        <a href="{{ url_for('ticket_note_page', ticketId=ticket['id']) }}" class="btn btn-dark" role="button">Note</a>
+      {% endif %}
+
+      {% if session['authLevel'] > 1 %}
+        <a href="{{ url_for('ticket_edit_page', ticketId=ticket['id']) }}" class="btn btn-dark" role="button">Edit</a>
       {% endif %}
     {% else %}
       <div class="form-group note-form">

@@ -156,7 +156,7 @@ class TicketManager:
         self.max_addition_length = 600 # For notes and resolution text
 
 
-    def validate_new_ticket(self, title, body, category):
+    def validate_ticket(self, title, body):
         '''Returns message to flash if ticket submission is invalid, otherwise returns blank string'''
         msg = ''
         if title.strip() == '':
@@ -182,6 +182,24 @@ class TicketManager:
 
         newTicket = Ticket(title.strip(), body.strip(), category, priority, session['userId'])
         db.session.add(newTicket)
+        db.session.commit()
+
+
+    def update_ticket(self, id, title, body, category, priority):
+        '''Updates values in a single ticket by id'''
+
+        # Handle missing values
+        if category == '0':
+            category = None
+        if priority == '0':
+            priority = None
+
+        ticket = Ticket.query.filter_by(id=id).first()
+        ticket.title = title
+        ticket.body = body
+        ticket.category_id = category
+        ticket.priority = priority
+
         db.session.commit()
 
 

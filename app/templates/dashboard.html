@@ -122,26 +122,26 @@
         {% for ticket in tickets %}
           {% if ticket['open'] == True %}
             <tr>
-              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket['id'] }}</a></td>
-              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket['title'] }}</a></td>
+              <td><a href="{{ url_for('ticket_display_page', ticketId=ticket['id']) }}">{{ ticket['id'] }}</a></td>
+              <td><a href="{{ url_for('ticket_display_page', ticketId=ticket['id']) }}">{{ ticket['title'] }}</a></td>
 
               {% if ticket.category == None %}
-                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">-</a></td>
+                <td><a href="{{ url_for('ticket_display_page', ticketId=ticket['id']) }}">-</a></td>
               {% else %}
-                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.category['name'] }}</a></td>
+                <td><a href="{{ url_for('ticket_display_page', ticketId=ticket['id']) }}">{{ ticket.category['name'] }}</a></td>
               {% endif %}
 
-              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.raise_user['username'] }}</a></td>
-              <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">{{ ticket.raise_date.strftime('%m/%d/%Y') }}</a></td>
+              <td><a href="{{ url_for('ticket_display_page', ticketId=ticket['id']) }}">{{ ticket.raise_user['username'] }}</a></td>
+              <td><a href="{{ url_for('ticket_display_page', ticketId=ticket['id']) }}">{{ ticket.raise_date.strftime('%m/%d/%Y') }}</a></td>
 
               {% if ticket['priority'] == 3 %}
-                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:#8DA25C">Low</span></a></td>
+                <td><a href="{{ url_for('ticket_display_page', ticketId=ticket['id']) }}"><span style="color:#8DA25C">Low</span></a></td>
               {% elif ticket['priority'] == 2 %}
-                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:#EF8B2C">Medium</span></a></td>
+                <td><a href="{{ url_for('ticket_display_page', ticketId=ticket['id']) }}"><span style="color:#EF8B2C">Medium</span></a></td>
               {% elif ticket['priority'] == 1 %}
-                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}"><span style="color:#C02E1D">High</span></a></td>
+                <td><a href="{{ url_for('ticket_display_page', ticketId=ticket['id']) }}"><span style="color:#C02E1D">High</span></a></td>
               {% else %}
-                <td><a href="{{ url_for('ticket_page', ticketId=ticket['id']) }}">-</a></td>
+                <td><a href="{{ url_for('ticket_display_page', ticketId=ticket['id']) }}">-</a></td>
               {% endif %}
 
             </tr>
