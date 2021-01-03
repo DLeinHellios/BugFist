@@ -224,23 +224,23 @@ def ticket_display_page(ticketId):
         ticket = Ticket.query.filter_by(id=ticketId).first()
     except:
         # URL is malformed, unable to query ticket
-        return redirect(url_for("user_dashboard"))
+        ticket = None
 
     # Routing
-    if "username" in session:
+    if session['username'] == ticket.raise_user.username or session['authLevel'] > 0:
         if ticket != None:
-            if session['username'] == ticket.raise_user.username or session['authLevel'] > 0:
-                # Display ticket page
-                return render_template("ticket_display.html", ticket=ticket, categories=Category.query.all())
-            else:
-                # User is not raise user and lacks access level to view
-                flash("You lack permission to view this ticket")
-                return redirect(url_for("user_dashboard"))
+            # Display ticket page
+            return render_template("ticket_display.html", ticket=ticket, categories=Category.query.all())
 
         else:
-            # Redirect to dashboard and flash ticket not found
+            # Ticket not found
             flash("Ticket not found")
             return redirect(url_for("user_dashboard"))
+
+    elif "username" in session:
+        # User is not raise user and lacks access level to view
+        flash("You lack permission to view this ticket")
+        return redirect(url_for("user_dashboard"))
 
     else:
         # No user logged-in, redirect to login page
@@ -276,14 +276,20 @@ def ticket_resolve_page(ticketId):
             return redirect(url_for("ticket_resolve_page", ticketId = ticket.id))
 
     else:
-        if "username" in session:
-            if session['authLevel'] > 0 and ticket.open:
+        if "username" in session and session['authLevel'] > 0:
+            if ticket != None and ticket.open:
+                # Render resolve page
                 return render_template("ticket_resolve.html", ticket=ticket)
 
             else:
-                # User not permitted to resolve
-                flash("You lack permission to resolve this ticket")
+                # Invalid ticket id or ticket already resolved
+                flash("Ticket not found")
                 return redirect(url_for("user_dashboard"))
+
+        elif "username" in session:
+            # Redirect standard users + analysts to dashboard
+            flash("You lack permission to perform this function")
+            return redirect(url_for("user_dashboard"))
 
         else:
             # No user logged-in, redirect to login page
@@ -301,7 +307,7 @@ def ticket_note_page(ticketId):
         ticket = Ticket.query.filter_by(id=ticketId).first()
     except:
         # URL is malformed, unable to query ticket
-        return redirect(url_for("user_dashboard"))
+        ticket = None
 
     # Routing
     if request.method == "POST" and session['authLevel'] > 0:
@@ -318,14 +324,20 @@ def ticket_note_page(ticketId):
             return redirect(url_for("ticket_note_page", ticketId = ticket.id))
 
     else:
-        if "username" in session:
-            if session['authLevel'] > 0 and ticket.open:
+        if "username" in session and session['authLevel'] > 0:
+            if ticket != None and ticket.open:
+                # Render note page
                 return render_template("ticket_note.html", ticket=ticket)
 
             else:
-                # User not permitted to resolve
-                flash("You lack permission to perform this function")
+                # Invalid ticket id or ticket already resolved
+                flash("Ticket not found")
                 return redirect(url_for("user_dashboard"))
+
+        elif "username" in session:
+            # Redirect standard users + analysts to dashboard
+            flash("You lack permission to perform this function")
+            return redirect(url_for("user_dashboard"))
 
         else:
             # No user logged-in, redirect to login page
@@ -345,7 +357,7 @@ def ticket_edit_page(ticketId):
 
     except:
         # URL is malformed, unable to query ticket
-        return redirect(url_for("user_dashboard"))
+        ticket = None
 
     # Routing
     if request.method == "POST" and session['authLevel'] > 1:
@@ -362,17 +374,27 @@ def ticket_edit_page(ticketId):
             return redirect(url_for("ticket_edit_page", ticketId = ticket.id))
 
     else:
-        if "username" in session:
-            if session['authLevel'] > 1:
+        if "username" in session and session["authLevel"] > 1:
+            if ticket != None:
+                # Render edit page
                 return render_template("ticket_edit.html", ticket=ticket, categories=categories)
 
             else:
-                # User not permitted to resolve
-                flash("You lack permission to perform this function")
+                # Ticket not found
+                flash("Ticket not found")
                 return redirect(url_for("user_dashboard"))
 
+        elif "username" in session:
+            # Redirect standard users + analysts to dashboard
+            flash("You lack permission to perform this function")
+            return redirect(url_for("user_dashboard"))
+
         else:
-            # No user logged-in, redirect to login page
+            # No user logged-in - redirect to login
+            flash("Please login to continue", "info")
+            return redirect(url_for("login_page"))
+
+
             flash("Please login to continue", "info")
             return redirect(url_for("login_page"))
 
@@ -434,7 +456,7 @@ def category_edit(catId):
         category = Category.query.filter_by(id=catId).first()
     except:
         # URL is malformed, unable to query category
-            return redirect(url_for("configuration_page"))
+        category = None
 
     # Routing
     if request.method == "POST" and session['authLevel'] > 1:
@@ -490,7 +512,7 @@ def user_edit(userId):
         user = User.query.filter_by(id=userId).first()
     except:
         # URL is malformed, unable to query user
-            return redirect(url_for("configuration_page"))
+        user = None
 
     # Routing
     if request.method == "POST" and session['authLevel'] > 1:
