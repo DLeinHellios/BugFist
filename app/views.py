@@ -249,7 +249,7 @@ def ticket_display_page(ticketId):
 
 
 # Ticket Resolution pages
-@app.route("/r/<ticketId>", methods=["POST", "GET"])
+@app.route("/t/<ticketId>/resolve", methods=["POST", "GET"])
 def ticket_resolve_page(ticketId):
 
     # Setup
@@ -298,7 +298,7 @@ def ticket_resolve_page(ticketId):
 
 
 # Ticket Notes Pages
-@app.route("/n/<ticketId>", methods=["POST", "GET"])
+@app.route("/t/<ticketId>/note", methods=["POST", "GET"])
 def ticket_note_page(ticketId):
 
     # Setup
@@ -346,7 +346,7 @@ def ticket_note_page(ticketId):
 
 
 # Ticket Edit Pages
-@app.route("/e/<ticketId>", methods=["POST", "GET"])
+@app.route("/t/<ticketId>/edit", methods=["POST", "GET"])
 def ticket_edit_page(ticketId):
 
     # Setup
@@ -396,7 +396,7 @@ def ticket_edit_page(ticketId):
 
 
 #Ticket Delete Pages
-@app.route("/d/<ticketId>", methods=["POST","GET"])
+@app.route("/t/<ticketId>/delete", methods=["POST","GET"])
 def ticket_delete_page(ticketId):
 
     # Setup
