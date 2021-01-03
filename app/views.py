@@ -363,7 +363,7 @@ def ticket_edit_page(ticketId):
 
     else:
         if "username" in session:
-            if session['authLevel'] > 1 and ticket.open:
+            if session['authLevel'] > 1:
                 return render_template("ticket_edit.html", ticket=ticket, categories=categories)
 
             else:

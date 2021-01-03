@@ -91,10 +91,7 @@
         <a href="{{ url_for('ticket_resolve_page', ticketId=ticket['id']) }}" class="btn btn-dark" role="button">Resolve</a>
         <a href="{{ url_for('ticket_note_page', ticketId=ticket['id']) }}" class="btn btn-dark" role="button">Note</a>
       {% endif %}
-
-      {% if session['authLevel'] > 1 %}
-        <a href="{{ url_for('ticket_edit_page', ticketId=ticket['id']) }}" class="btn btn-dark" role="button">Edit</a>
-      {% endif %}
+      
     {% else %}
       <div class="form-group note-form">
         <hr>
@@ -103,6 +100,10 @@
         </div>
         <textarea class="form-control" name="resolution" rows=2 readonly>Resolved by {{ ticket['resolve_user'].username }} on {{ ticket['resolve_date'].strftime('%m/%d/%Y') }},&#13;{{ ticket['resolution'] }}</textarea>
       </div>
+    {% endif %}
+
+    {% if session['authLevel'] > 1 %}
+      <a href="{{ url_for('ticket_edit_page', ticketId=ticket['id']) }}" class="btn btn-dark" role="button">Edit</a>
     {% endif %}
 
     <a href="{{ session['lastPage'] }}" class="btn btn-dark" role="button">Back</a>
