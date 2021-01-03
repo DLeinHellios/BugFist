@@ -185,6 +185,18 @@ class TicketManager:
         db.session.commit()
 
 
+    def delete_ticket(self, id):
+        '''Deletes a single ticket by id, and all attached notes'''
+        ticket = Ticket.query.filter_by(id=id).first()
+        notes = Note.query.filter_by(ticket_id=id).all()
+
+        for note in notes:
+            db.session.delete(note)
+
+        db.session.delete(ticket)
+        db.session.commit()
+
+
     def update_ticket(self, id, title, body, category, priority):
         '''Updates values in a single ticket by id'''
 

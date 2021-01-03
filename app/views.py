@@ -395,6 +395,44 @@ def ticket_edit_page(ticketId):
             return redirect(url_for("login_page"))
 
 
+#Ticket Delete Pages
+@app.route("/d/<ticketId>", methods=["POST","GET"])
+def ticket_delete_page(ticketId):
+
+    # Setup
+    try:
+        # Query ticket + Categories
+        ticket = Ticket.query.filter_by(id=ticketId).first()
+
+    except:
+        # URL is malformed, unable to query ticket
+        ticket = None
+
+    # Routing
+    if request.method == "POST" and session['authLevel'] > 1:
+        ticketManage.delete_ticket(ticket.id)
+
+        flash("Ticket:{} has been deleted".format(ticket.id))
+        return redirect(url_for("user_dashboard"))
+
+    else:
+        if "username" in session and session["authLevel"] > 1:
+            if ticket != None:
+                # Render delete page
+                return render_template("ticket_delete.html", ticket=ticket)
+
+            else:
+                # Ticket not found
+                flash("Ticket not found")
+                return redirect(url_for("user_dashboard"))
+
+        elif "username" in session:
+            # Redirect standard users + analysts to dashboard
+            flash("You lack permission to perform this function")
+            return redirect(url_for("user_dashboard"))
+
+        else:
+            # No user logged-in - redirect to login
             flash("Please login to continue", "info")
             return redirect(url_for("login_page"))
 
