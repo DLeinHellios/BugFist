@@ -58,6 +58,7 @@
       <div class="edit-nav">
         <button type="submit" value="submit" class="btn btn-dark">Submit</button>
         <a href="/admin" class="btn btn-dark" role="button">Cancel</a>
+        <a href="{{ url_for('category_delete', catId=category['id']) }}" class="block btn btn-dark" role="button">Delete</a>
       </div>
     </form>
 

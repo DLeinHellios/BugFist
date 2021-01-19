@@ -299,8 +299,20 @@ class CategoryManager:
         if active:
             isActive = True
 
-        newCat = Category(name, description, isActive)
+        newCat = Category(name.strip(), description.strip(), isActive)
         db.session.add(newCat)
+        db.session.commit()
+
+
+    def delete(self, category):
+        '''Deletes a single category with specified id'''
+        tickets = Ticket.query.filter_by(category_id=category.id).all()
+
+        # Set all ticket categories to none
+        for t in tickets:
+            t.category_id = None
+
+        db.session.delete(category)
         db.session.commit()
 
 

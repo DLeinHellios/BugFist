@@ -497,7 +497,7 @@ def category_edit(catId):
         category = None
 
     # Routing
-    if request.method == "POST" and session['authLevel'] > 1:
+    if request.method == "POST" and session['authLevel'] > 1 and category != None:
         if request.form["cat_name"].strip() != '':
             # Name is not blank, commit edit in db
             category.name = request.form["cat_name"].strip()
@@ -523,6 +523,45 @@ def category_edit(catId):
             if category != None:
                 # Render category config page
                 return render_template("category_edit.html", category=category)
+
+            else:
+                # Invalid category id
+                flash("Category not found")
+                return redirect(url_for("configuration_page"))
+
+        elif "username" in session:
+            # Redirect standard users + analysts to dashboard
+            flash("You lack permission to perform this function")
+            return redirect(url_for("user_dashboard"))
+
+        else:
+            # No user logged-in - redirect to login
+            flash("Please login to continue", "info")
+            return redirect(url_for("login_page"))
+
+
+# Category Delete Pages
+@app.route("/c/<catId>/delete", methods=["POST", "GET"])
+def category_delete(catId):
+
+    # Setup
+    try:
+        # Query category
+        category = Category.query.filter_by(id=catId).first()
+    except:
+        # URL is malformed, unable to query category
+        category = None
+
+    if request.method == "POST" and session['authLevel'] > 1 and category != None:
+        categoryManage.delete(category)
+        flash("Category:{} has been deleted".format(category.id))
+        return redirect(url_for("configuration_page"))
+
+    else:
+        if "username" in session and session["authLevel"] > 1:
+            if category != None:
+                # Render category delete page
+                return render_template("category_delete.html", category=category)
 
             else:
                 # Invalid category id
