@@ -28,9 +28,12 @@
       </div>
       <button type="submit" value="submit" class="btn btn-dark btn-block">Submit</button>
     </form>
-    <div class="account-links">
-      <p>Need an account? <a href="/register">Register</a></p>
-    </div>
+
+    {% if settings.switch != 0 %}
+      <div class="account-links">
+        <p>Need an account? <a href="/register">Register</a></p>
+      </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

@@ -32,7 +32,11 @@
           <input type="password" class="form-control" name="rPass1" placeholder="Retype Password">
         </div>
         <div class="form-group">
-          <input type="text" class="form-control" name="registerCode" placeholder="Registration Code (required)">
+          {% if settings.switch == 2 %}
+            <input type="text" class="form-control" name="registerCode" placeholder="Registration Code (required)">
+          {% else %}
+            <input type="hidden" class="form-control" name="registerCode" value="#"">
+          {% endif %}
         </div>
         <div class="form-group">
           {{ recaptcha }}

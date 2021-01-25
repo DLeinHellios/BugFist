@@ -56,6 +56,20 @@ class UserManager:
         return msg
 
 
+    def validate_register_code(self, code):
+        '''Returns a bool after checking registration settings for code'''
+        regType = Settings.query.filter_by(name="register_type").first()
+        valid = False
+
+        if regType.switch == 2:
+            if regType.data == code:
+                valid = True
+        else:
+            valid = True
+
+        return valid
+
+
     def validate_new_user(self, username, email, password0, password1, registerCode):
         '''Returns a message to flash if new user submission contains errors, returns blank string if valid'''
         msg = ''
@@ -66,7 +80,7 @@ class UserManager:
         elif not username.isalnum():
             msg = "Username can only contain letters and numbers"
 
-        elif registerCode != os.environ['REGISTER_CODE']:
+        elif not self.validate_register_code(registerCode):
             msg = 'Invalid registration code'
 
         elif len(username) > self.max_username_length:
@@ -347,11 +361,11 @@ class SettingsManager:
         regSettings = Settings.query.filter_by(name="register_type").first()
 
         # No settings, set defaults
-        if settings == None:
+        if regSettings == None:
             self.set_default(True)
-            settings = self.get_all()
+            regSettings = self.get_registration()
 
-        return settings
+        return regSettings
 
 
     def update_registration(self, switch, data):
