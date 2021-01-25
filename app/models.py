@@ -115,13 +115,15 @@ class Settings(db.Model):
     __tablename__ = 'settings'
 
     id = db.Column(db.Integer, primary_key=True)
-    setting = db.Column(db.String)
-    value = db.Column(db.String)
+    name = db.Column(db.String)
+    switch = db.Column(db.Integer)
+    data = db.Column(db.String)
 
 
-    def __init__(self, setting, value):
-        self.setting = setting
-        self.value = value
+    def __init__(self, name, switch, data):
+        self.name = name
+        self.switch = switch
+        self.data = data
 
 
     def __repr__(self):

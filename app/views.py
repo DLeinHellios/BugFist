@@ -1,6 +1,6 @@
 from flask import render_template, url_for, redirect, request, session, flash
 from flask_wtf.csrf import CSRFError
-from app import app, recaptcha, userSession, userManage, ticketManage, categoryManage
+from app import app, recaptcha, userSession, userManage, ticketManage, categoryManage, settingsManage
 from app.models import *
 
 # Main page
@@ -647,9 +647,11 @@ def view_all_users():
 # System Settings
 @app.route("/settings")
 def system_settings():
+    settings = settingsManage.get_all()
+
     if "username" in session and session["authLevel"] > 1:
         # Render admin settings page
-        return render_template("admin_settings.html")
+        return render_template("admin_settings.html", settings=settings)
 
     elif "username" in session:
         # Redirect standard users + analysts to dashboard

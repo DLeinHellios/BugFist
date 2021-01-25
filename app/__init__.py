@@ -22,6 +22,7 @@ userSession = UserSession()
 userManage = UserManager()
 ticketManage = TicketManager()
 categoryManage = CategoryManager()
+settingsManage = SettingsManager()
 
 # Import views
 from app.views import *

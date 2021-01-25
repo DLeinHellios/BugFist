@@ -318,4 +318,47 @@ class CategoryManager:
 
 
 class SettingsManager:
-    pass
+    def set_default(self, registration):
+        '''Sets default system settings in db, returns Settings object list'''
+
+        # Registration type
+        #  0 = Closed, 1 = Open, 2 = Code required
+        if registration:
+            regType = Settings("register_type", 2, "BugFist")
+            db.session.add(regType)
+
+        db.session.commit()
+
+
+    def get_all(self):
+        '''Returns all settings from db'''
+        settings = Settings.query.all()
+
+        # No settings, set defaults
+        if settings == []:
+            self.set_default(True)
+            settings = self.get_all()
+
+        return settings
+
+
+    def get_registration(self):
+        '''Returns registration settings from db'''
+        regSettings = Settings.query.filter_by(name="register_type").first()
+
+        # No settings, set defaults
+        if settings == None:
+            self.set_default(True)
+            settings = self.get_all()
+
+        return settings
+
+
+    def update_registration(self, switch, data):
+        '''Sets the registration type setting'''
+        regSettings = Settings.query.filter_by(name="register_type").first()
+
+        regSettings.switch = switch
+        regSettings.data = data
+
+        db.session.commit()
