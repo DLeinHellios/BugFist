@@ -56,6 +56,20 @@ class UserManager:
         return msg
 
 
+    def validate_register_code(self, code):
+        '''Returns a bool after checking registration settings for code'''
+        regType = Settings.query.filter_by(name="register_type").first()
+        valid = False
+
+        if regType.switch == 2:
+            if regType.data == code:
+                valid = True
+        else:
+            valid = True
+
+        return valid
+
+
     def validate_new_user(self, username, email, password0, password1, registerCode):
         '''Returns a message to flash if new user submission contains errors, returns blank string if valid'''
         msg = ''
@@ -66,7 +80,7 @@ class UserManager:
         elif not username.isalnum():
             msg = "Username can only contain letters and numbers"
 
-        elif registerCode != os.environ['REGISTER_CODE']:
+        elif not self.validate_register_code(registerCode):
             msg = 'Invalid registration code'
 
         elif len(username) > self.max_username_length:
@@ -318,4 +332,47 @@ class CategoryManager:
 
 
 class SettingsManager:
-    pass
+    def set_default(self, registration):
+        '''Sets default system settings in db, returns Settings object list'''
+
+        # Registration type
+        #  0 = Closed, 1 = Open, 2 = Code required
+        if registration:
+            regType = Settings("register_type", 2, "BugFist")
+            db.session.add(regType)
+
+        db.session.commit()
+
+
+    def get_all(self):
+        '''Returns all settings from db'''
+        settings = Settings.query.all()
+
+        # No settings, set defaults
+        if settings == []:
+            self.set_default(True)
+            settings = self.get_all()
+
+        return settings
+
+
+    def get_registration(self):
+        '''Returns registration settings from db'''
+        regSettings = Settings.query.filter_by(name="register_type").first()
+
+        # No settings, set defaults
+        if regSettings == None:
+            self.set_default(True)
+            regSettings = self.get_registration()
+
+        return regSettings
+
+
+    def update_registration(self, switch, data):
+        '''Sets the registration type setting'''
+        regSettings = Settings.query.filter_by(name="register_type").first()
+
+        regSettings.switch = switch
+        regSettings.data = data
+
+        db.session.commit()

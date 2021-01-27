@@ -1,6 +1,6 @@
 from flask import render_template, url_for, redirect, request, session, flash
 from flask_wtf.csrf import CSRFError
-from app import app, recaptcha, userSession, userManage, ticketManage, categoryManage
+from app import app, recaptcha, userSession, userManage, ticketManage, categoryManage, settingsManage
 from app.models import *
 
 # Main page
@@ -22,16 +22,18 @@ def login_page():
         return redirect(url_for("user_dashboard"))
 
     else:
+        settings = settingsManage.get_registration()
+
         if request.method == "POST":
             # Login user
             if userSession.auth(request.form["loginUser"], request.form["loginPass"]):
                 return redirect(url_for("user_dashboard"))
             else:
                 flash("Incorrect login information", "warning")
-                return render_template("login.html")
+                return render_template("login.html", settings=settings)
         else:
             # Display login page
-            return render_template("login.html")
+            return render_template("login.html", settings=settings)
 
 
 # User logout
@@ -48,6 +50,12 @@ def logout_user():
 # User registration
 @app.route('/register', methods=["POST", "GET"])
 def register_user():
+    settings = settingsManage.get_registration()
+
+    # Check if registration is closed
+    if settings.switch == 0:
+        return render_template("register_closed.html")
+
     if request.method == "POST":
 
         # Validate reCAPTCHA
@@ -56,12 +64,12 @@ def register_user():
                 request.form["rPass0"], request.form["rPass1"], request.form["registerCode"])
         else:
             flash("Please complete the CAPTCHA to continue")
-            return render_template("register.html", prefill=[request.form["rUser"], request.form["rEmail"]])
+            return render_template("register.html", prefill=[request.form["rUser"], request.form["rEmail"]], settings=settings)
 
         # Validate new user data
         if validate != '':
             flash(validate)
-            return render_template("register.html", prefill=[request.form["rUser"], request.form["rEmail"]])
+            return render_template("register.html", prefill=[request.form["rUser"], request.form["rEmail"]], settings=settings)
         else:
             # Register user
             userManage.register_user(request.form["rUser"], request.form["rEmail"], request.form["rPass0"])
@@ -74,7 +82,7 @@ def register_user():
             return redirect(url_for("user_dashboard"))
         else:
             # Render registration page
-            return render_template("register.html", prefill=['',''])
+            return render_template("register.html", prefill=['',''], settings=settings)
 
 
 # Submit page
@@ -645,21 +653,31 @@ def view_all_users():
 
 
 # System Settings
-@app.route("/settings")
+@app.route("/settings", methods=["POST", "GET"])
 def system_settings():
-    if "username" in session and session["authLevel"] > 1:
-        # Render admin settings page
-        return render_template("admin_settings.html")
+    if request.method == "POST" and session['authLevel'] > 1:
+        # Update settings
+        settingsManage.update_registration(request.form.get("regtype"), request.form["regcode"])
 
-    elif "username" in session:
-        # Redirect standard users + analysts to dashboard
-        flash("You lack permission to perform this function")
-        return redirect(url_for("user_dashboard"))
+        flash("System settings have been updated", "info")
+        return redirect(url_for("configuration_page"))
 
     else:
-        # No user logged-in - redirect to login
-        flash("Please login to continue", "info")
-        return redirect(url_for("login_page"))
+        settings = settingsManage.get_registration()
+
+        if "username" in session and session["authLevel"] > 1:
+            # Render admin settings page
+            return render_template("admin_settings.html", settings=settings)
+
+        elif "username" in session:
+            # Redirect standard users + analysts to dashboard
+            flash("You lack permission to perform this function")
+            return redirect(url_for("user_dashboard"))
+
+        else:
+            # No user logged-in - redirect to login
+            flash("Please login to continue", "info")
+            return redirect(url_for("login_page"))
 
 
 #----- Errors -----
