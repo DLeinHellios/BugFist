@@ -653,23 +653,31 @@ def view_all_users():
 
 
 # System Settings
-@app.route("/settings")
+@app.route("/settings", methods=["POST", "GET"])
 def system_settings():
-    settings = settingsManage.get_all()
+    if request.method == "POST" and session['authLevel'] > 1:
+        # Update settings
+        settingsManage.update_registration(request.form.get("regtype"), request.form["regcode"])
 
-    if "username" in session and session["authLevel"] > 1:
-        # Render admin settings page
-        return render_template("admin_settings.html", settings=settings)
-
-    elif "username" in session:
-        # Redirect standard users + analysts to dashboard
-        flash("You lack permission to perform this function")
-        return redirect(url_for("user_dashboard"))
+        flash("System settings have been updated", "info")
+        return redirect(url_for("configuration_page"))
 
     else:
-        # No user logged-in - redirect to login
-        flash("Please login to continue", "info")
-        return redirect(url_for("login_page"))
+        settings = settingsManage.get_registration()
+
+        if "username" in session and session["authLevel"] > 1:
+            # Render admin settings page
+            return render_template("admin_settings.html", settings=settings)
+
+        elif "username" in session:
+            # Redirect standard users + analysts to dashboard
+            flash("You lack permission to perform this function")
+            return redirect(url_for("user_dashboard"))
+
+        else:
+            # No user logged-in - redirect to login
+            flash("Please login to continue", "info")
+            return redirect(url_for("login_page"))
 
 
 #----- Errors -----
